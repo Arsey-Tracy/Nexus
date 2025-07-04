@@ -1,34 +1,45 @@
 /** @format */
-"use client";
+
+import React from "react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
-    <section className="bg-gradient-to-r from-sky-500 to-emerald-500 text-white py-20 md:py-32 animate-fade-in">
-      <div className="container mx-auto px-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg">
-          Welcome to NexusCare
+    <section className="relative bg-gradient-to-r from-sky-500 to-emerald-500 text-white py-20 md:py-32 overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
+        }}
+      />
+
+      {/* Content overlay */}
+      <div className="relative z-10 container mx-auto px-6 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          Welcome to CareInnovate Hub
         </h1>
         <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
           Your trusted partner in Telemedicine, groundbreaking Research, and
           healthcare Innovation. Connecting patients, professionals, and
           hospitals seamlessly.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="space-x-4">
           <Button
             asChild
             size="lg"
-            className="bg-white text-sky-600 hover:bg-gray-100 font-semibold shadow"
+            className="bg-white text-sky-600 hover:bg-gray-100"
           >
-            <Link href="/learn-more">Learn More</Link>
+            <Link to="/learn-more">Learn More</Link>
           </Button>
           <Button
             asChild
+            variant="outline"
             size="lg"
-            className="bg-sky-600 text-white hover:bg-sky-700 font-semibold shadow"
+            className="border-white text-white hover:bg-white hover:text-sky-600"
           >
-            <Link href="/get-started">Get Started</Link>
+            <Link to="/get-started">Get Started</Link>
           </Button>
         </div>
       </div>
@@ -37,14 +48,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
-// Add this to your global CSS (e.g., globals.css):
-/*
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(30px);}
-  to { opacity: 1; transform: translateY(0);}
-}
-.animate-fade-in {
-  animation: fade-in 1s ease;
-}
-*/
