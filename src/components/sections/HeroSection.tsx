@@ -10,7 +10,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({
-  title = "Welcome to CareInnovate Hub",
+  title = "Welcome to Nexus Care",
   subtitle = "Your trusted partner in Telemedicine, groundbreaking Research, and healthcare Innovation. Connecting patients, professionals, and hospitals seamlessly.",
   showCta = true,
 }: HeroSectionProps) => {
@@ -41,7 +41,7 @@ const HeroSection = ({
               asChild
               variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-sky-600"
+              className="bg-white text-sky-600 hover:bg-gray-100"
             >
               <Link href="/get-started">Get Started</Link>
             </Button>
