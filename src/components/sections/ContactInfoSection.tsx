@@ -1,5 +1,5 @@
 /** @format */
-"use-client";
+"use client";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, MapPin } from "lucide-react";
@@ -31,7 +31,7 @@ const ContactInfoSection = () => {
               <p className="text-gray-600">
                 General Inquiries:{" "}
                 <a
-                  href="mailto:info@nexuscare.hub"
+                  href="mailto:nexuscare@gmail.com"
                   className="text-sky-600 hover:underline"
                 >
                   info@nexuscare.hub
@@ -61,19 +61,28 @@ const ContactInfoSection = () => {
               <p className="text-gray-600">
                 Office:{" "}
                 <a
-                  href="tel:+1234567890"
+                  href="tel:+256742879650"
                   className="text-emerald-600 hover:underline"
                 >
-                  +1 (234) 567-890
+                  +256742879650
+                </a>
+              </p>
+              <p className="text-gray-600">
+                Whatsapp:{" "}
+                <a
+                  href="tel:+256779541272"
+                  className="text-emerald-600 hover:underline"
+                >
+                  +256779541272
                 </a>
               </p>
               <p className="text-gray-600">
                 Support Line:{" "}
                 <a
-                  href="tel:+1800123456"
+                  href="tel:+256707758612"
                   className="text-emerald-600 hover:underline"
                 >
-                  +1 (800) 123-456
+                  +256707758612
                 </a>
               </p>
             </CardContent>
@@ -88,8 +97,8 @@ const ContactInfoSection = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">123 Innovation Drive,</p>
-              <p className="text-gray-600">Tech Park, HealthCity, HC 54321</p>
+              <p className="text-gray-600">NexusCare, </p>
+              <p className="text-gray-600">Nansana, Wakiso, Uganda</p>
             </CardContent>
           </Card>
         </div>

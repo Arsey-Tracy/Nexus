@@ -14,10 +14,9 @@ const AboutUsTeaserSection = () => {
           Pioneering the Future of Healthcare
         </h2>
         <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-          At CareInnovate Hub, we are dedicated to transforming healthcare
-          through technology and collaborative research. Our mission is to make
-          quality care accessible and to drive innovation for a healthier
-          tomorrow.
+          At Nexus Care, we are dedicated to transforming healthcare through
+          technology and collaborative research. Our mission is to make quality
+          care accessible and to drive innovation for a healthier tomorrow.
         </p>
         <Button
           asChild

@@ -1,8 +1,6 @@
 /** @format */
 
 import DonationForm from "@/components/DonationForm";
-import Footer from "@/components/layout/Footer";
-import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import Image from "next/image";
 
 const mockProjectsData = [
   {
@@ -30,8 +30,11 @@ const mockProjectsData = [
 ];
 
 const DonationPage = () => {
-  <div className="flex flex-col min-h-screen">
-    <Navbar />
+  const params = useParams();
+  const { id } = params;
+  const project = mockProjectsData.find((proj) => proj.id === id);
+
+  return (
     <main className="flex-grow container mx-auto px-4 sm:px-6 py-12">
       {project ? (
         <Card className="max-w-2xl mx-auto shadow-lg">
@@ -40,11 +43,14 @@ const DonationPage = () => {
               Donate to: {project.title}
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <img
+          <CardContent>
+            <Image
               src={project.imageUrl}
               alt={project.title}
+              width={800}
+              height={256}
               className="w-full h-64 object-cover rounded-md mb-6"
+              priority
             />
             <CardDescription className="text-lg text-gray-700 mb-6">
               {project.description}
@@ -78,6 +84,7 @@ const DonationPage = () => {
         </div>
       )}
     </main>
-    <Footer />
-  </div>;
+  );
 };
+
+export default DonationPage;

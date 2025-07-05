@@ -1,5 +1,5 @@
 /** @format */
-"use-client";
+"use client";
 
 import React from "react";
 import ProjectCard from "@/components/ProjectCard";
