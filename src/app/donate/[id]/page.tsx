@@ -1,5 +1,5 @@
 /** @format */
-
+"use client";
 import DonationForm from "@/components/DonationForm";
 import { Button } from "@/components/ui/button";
 import {
