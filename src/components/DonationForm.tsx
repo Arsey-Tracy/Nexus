@@ -1,13 +1,13 @@
 /** @format */
 
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // import { Label } from "@/components/ui/label"; // Using Label directly for simple cases
-// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
   FormControl,
@@ -73,7 +73,6 @@ const DonationForm = ({ projectTitle }: { projectTitle: string }) => {
     toast({
       title: "Donation Processing",
       description: `Thank you for your donation of $${finalAmount} to ${projectTitle}! (This is a demo, no actual payment processed)`,
-      variant: "default",
     });
     form.reset();
   };
@@ -246,3 +245,7 @@ const DonationForm = ({ projectTitle }: { projectTitle: string }) => {
 };
 
 export default DonationForm;
+function toast({ title, description }: { title: string; description: string }) {
+  // Simple fallback toast implementation using alert (replace with your UI toast system)
+  alert(`${title}\n\n${description}`);
+}
