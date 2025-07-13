@@ -6,13 +6,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { HandCoins } from "lucide-react";
 
 const mockProjectsData = [
   {
