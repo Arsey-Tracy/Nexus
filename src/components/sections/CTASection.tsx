@@ -25,7 +25,8 @@ const CTASection = () => {
           <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="relative h-64 w-full">
               <Image
-                src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                // src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                src="/bedsidenursing.jpg"
                 alt="Professional bedside nursing care"
                 fill
                 className="object-cover"
@@ -64,7 +65,8 @@ const CTASection = () => {
           <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="relative h-64 w-full">
               <Image
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                // src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                src="/consultation.jpg"
                 alt="Online doctor consultation"
                 fill
                 className="object-cover"

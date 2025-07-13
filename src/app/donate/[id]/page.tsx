@@ -6,26 +6,38 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { HandCoins } from "lucide-react";
 
 const mockProjectsData = [
   {
     id: "1",
-    title: "Project Alpha",
-    description: "A groundbreaking project that changes everything.",
+    title: "Telemedicine for Rural Clinics",
+    description:
+      "Equipping remote clinics with telemedicine kits to improve access to specialist consultations.",
     imageUrl: "https://example.com/project-alpha.jpg",
     donationLink: "https://example.com/donate/alpha",
   },
   {
     id: "2",
-    title: "Project Beta",
-    description: "An innovative project that improves lives.",
-    imageUrl: "https://example.com/project-beta.jpg",
-    donationLink: "https://example.com/donate/beta",
+    title: "AI-Powered Diagnostic Tool Research",
+    description:
+      "Funding research into AI algorithms for early disease detection from medical imaging.",
+    imageUrl: "/placeholder.svg",
+    donationLink: "https://example.com/donate/alpha",
+  },
+  {
+    id: "3",
+    title: "Healthcare Innovation Hub Setup",
+    description:
+      "Building a collaborative space for healthcare professionals to develop and test new solutions.",
+    imageUrl: "/placeholder.svg",
+    donationLink: "https://example.com/donate/alpha",
   },
 ];
 
@@ -58,12 +70,6 @@ const DonationPage = () => {
 
             <DonationForm projectTitle={project.title} />
           </CardContent>
-          {/* Footer can be removed or repurposed if the form has its own submit button */}
-          {/* <CardFooter className="flex flex-col sm:flex-row justify-center sm:justify-end pt-6 border-t">
-              <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white">
-                <HandCoins className="mr-2 h-5 w-5" /> Proceed with Donation
-              </Button>
-            </CardFooter> */}
         </Card>
       ) : (
         <div className="text-center py-10">

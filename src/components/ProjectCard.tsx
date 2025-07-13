@@ -59,7 +59,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <CardFooter className="p-0 mt-auto">
           <Button
             onClick={handleDonateClick}
-            className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow"
+            className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow cursor-pointer"
           >
             Donate Now
           </Button>

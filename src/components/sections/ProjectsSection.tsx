@@ -9,30 +9,37 @@ import ProjectCard from "@/components/ProjectCard";
 const mockProjects = [
   {
     id: "1",
-    title: "Telemedicine for Rural Clinics",
-    description:
-      "Equipping remote clinics with telemedicine kits to improve access to specialist consultations.",
+    title: "Nexus AI Health Assistant (NAHA)",
+    description: "An AI-powered tool to support healthcare needs.",
     imageUrl: "/placeholder.svg", // Ensure this path is correct or use an uploaded image
     goal: 10000,
     raised: 4500,
   },
   {
     id: "2",
-    title: "AI-Powered Diagnostic Tool Research",
+    title: "Breast Cancer Prevention Innovation",
     description:
-      "Funding research into AI algorithms for early disease detection from medical imaging.",
+      "Solutions for early detection and prevention of breast cancer",
     imageUrl: "/placeholder.svg",
     goal: 25000,
     raised: 12000,
   },
   {
     id: "3",
-    title: "Healthcare Innovation Hub Setup",
+    title: "Sign Language Translator",
     description:
-      "Building a collaborative space for healthcare professionals to develop and test new solutions.",
+      "Building an innovative sign language translator into text and speech using AI.",
     imageUrl: "/placeholder.svg",
     goal: 50000,
     raised: 15000,
+  },
+  {
+    id: "4",
+    title: "AMR Digital Tracker(planned)",
+    description: "A tool to monitor and track antimicrobial resistance",
+    imageUrl: "/placeholder.svg",
+    goal: 150000,
+    raised: 34000,
   },
 ];
 

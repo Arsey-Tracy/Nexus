@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 // import { toast } from "@/hooks/use-toast";
-import { CreditCard, Landmark, Users } from "lucide-react"; // HandCoins was used, using CreditCard
+import { CreditCard, HandCoins, Landmark, Users } from "lucide-react"; // HandCoins was used, using CreditCard
 
 const donationSchema = z.object({
   amount: z
@@ -38,9 +38,12 @@ const donationSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters." }),
   donorEmail: z.string().email({ message: "Invalid email address." }),
-  paymentMethod: z.enum(["creditCard", "bankTransfer", "crypto"], {
-    required_error: "You need to select a payment method.",
-  }),
+  paymentMethod: z.enum(
+    ["creditCard", "bankTransfer", "crypto", "mobileMoney"],
+    {
+      required_error: "You need to select a payment method.",
+    }
+  ),
 });
 
 type DonationFormValues = z.infer<typeof donationSchema>;
@@ -235,9 +238,9 @@ const DonationForm = ({ projectTitle }: { projectTitle: string }) => {
         <Button
           type="submit"
           size="lg"
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
         >
-          Donate Now
+          <HandCoins className="mr-2 h-5 w-5" /> Proceed with Donation
         </Button>
       </form>
     </Form>
