@@ -2,8 +2,6 @@
 import React from "react";
 
 import AboutSection from "@/components/sections/AboutSection";
-import AboutUsTeaserSection from "@/components/sections/AboutUsTeaserSection";
-import AboutUsContentSection from "@/components/sections/AboutUsContentSection";
 import HeroSection from "@/components/sections/HeroSection";
 
 const AboutUsPage = () => {
@@ -17,8 +15,6 @@ const AboutUsPage = () => {
         showCta={false} // Assuming no specific CTA for this hero
       />
       <AboutSection />
-      <AboutUsTeaserSection />
-      <AboutUsContentSection />
     </main>
   );
 };

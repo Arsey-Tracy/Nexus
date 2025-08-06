@@ -18,7 +18,6 @@ const AboutUsContentSection = () => {
             and collaborative research.
           </p>
         </div>
-
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <Image
             src="/placeholder.svg" // Replace with an actual image if available via upload
@@ -56,8 +55,8 @@ const AboutUsContentSection = () => {
                 <p className="text-gray-700">
                   We envision a world where innovative healthcare solutions are
                   accessible to all, leading to improved patient outcomes and a
-                  healthier global community. CareInnovate Hub strives to be at
-                  the forefront of this transformation.
+                  healthier global community. NexusCare strives to be at the
+                  forefront of this transformation.
                 </p>
               </CardContent>
             </Card>
