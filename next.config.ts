@@ -1,9 +1,14 @@
-import type { NextConfig } from "next";
+import { Config } from "next";
 
-const nextConfig: NextConfig = {
-  images: {
-    domains: ["images.unsplash.com", "example.com"],
+const config: Config = {
+  experimental: {
+    turbo: {
+      rules: {
+        // Disable the experimental font loading
+        "*.woff2": ["raw"],
+      },
+    },
   },
 };
 
-export default nextConfig;
+export default config;

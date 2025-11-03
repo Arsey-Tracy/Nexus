@@ -33,7 +33,7 @@ const HeroSection = ({
             <Button
               asChild
               size="lg"
-              className="bg-white text-sky-600 hover:bg-gray-100"
+              className="bg-white text-sky-600 hover:bg-gray-100 cursor-pointer"
             >
               <Link href="/learn-more">Learn More</Link>
             </Button>
@@ -41,7 +41,7 @@ const HeroSection = ({
               asChild
               variant="outline"
               size="lg"
-              className="bg-white text-sky-600 hover:bg-gray-100"
+              className="bg-white text-sky-600 hover:bg-gray-100 cursor-pointer"
             >
               <Link href="/get-started">Get Started</Link>
             </Button>

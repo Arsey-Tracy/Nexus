@@ -22,6 +22,8 @@ const navLinks = [
   { to: "/projects", label: "Projects" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact" },
+  // { to: "/signin", label: "Sign In" },
+  // { to: "/register", label: "Register" },
 ];
 
 const Navbar = () => {
@@ -60,6 +62,14 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+
+          {/* Add Auth buttons separately */}
+          <Button asChild variant="ghost">
+            <Link href="/signin">Sign In</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/register">Register</Link>
+          </Button>
         </div>
 
         {/* Mobile Navigation - Drawer */}
@@ -102,6 +112,18 @@ const Navbar = () => {
                       </DrawerClose>
                     </li>
                   ))}
+
+                  {/* Add mobile auth buttons (full width for better tap targets) */}
+                  <li className="pt-2">
+                    <DrawerClose asChild>
+                      <Button asChild variant="outline" className="w-full">
+                        <Link href="/signin">Sign In</Link>
+                      </Button>
+                      <Button asChild className="w-full">
+                        <Link href="/register">Register</Link>
+                      </Button>
+                    </DrawerClose>
+                  </li>
                 </ul>
               </div>
             </DrawerContent>

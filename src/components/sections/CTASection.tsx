@@ -1,10 +1,11 @@
 /** @format */
-
+"use client";
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Stethoscope, UserCheck } from "lucide-react";
+import Link from "next/link";
 
 const CTASection = () => {
   return (
@@ -49,14 +50,8 @@ const CTASection = () => {
                 monitoring in the comfort of your own space.
               </p>
               <div className="space-y-3">
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
                   Order Bedside Nurse
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
-                >
-                  Learn More
                 </Button>
               </div>
             </CardContent>
@@ -89,14 +84,8 @@ const CTASection = () => {
                 advice from anywhere, anytime.
               </p>
               <div className="space-y-3">
-                <Button className="w-full bg-sky-600 hover:bg-sky-700 text-white">
-                  Start Consultation
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-sky-600 text-sky-600 hover:bg-sky-50"
-                >
-                  View Doctors
+                <Button className="w-full bg-sky-600 hover:bg-sky-700 text-white cursor-pointer">
+                  <Link href="/consultation">Start Consultation</Link>
                 </Button>
               </div>
             </CardContent>
