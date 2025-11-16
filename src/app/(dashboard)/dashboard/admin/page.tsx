@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -126,11 +127,24 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) return <div>Loading administrative dashboard...</div>;
+  if (loading)
+    return (
+      <div className="max-w-7xl mx-auto p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-8 w-20" />
+        </div>
+        <Skeleton className="h-40" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+        </div>
+      </div>
+    );
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen max-w-7xl mx-auto p-6 space-y-6">
       <header>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -175,37 +189,40 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pending Consultation Requests</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {pending.length > 0 ? (
-            <div className="space-y-4">
-              {pending.map((c) => (
-                <div
-                  key={c.id}
-                  className="p-4 border rounded-lg flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-semibold">
-                      {c.patient.first_name} {c.patient.last_name}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Requested on: {new Date(c.requested_at).toLocaleString()}
-                    </p>
+      <div className="app-card p-0">
+        <Card className="rounded-none">
+          <CardHeader>
+            <CardTitle>Pending Consultation Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pending.length > 0 ? (
+              <div className="space-y-4">
+                {pending.map((c) => (
+                  <div
+                    key={c.id}
+                    className="p-4 border rounded-lg flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="font-semibold">
+                        {c.patient.first_name} {c.patient.last_name}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Requested on:{" "}
+                        {new Date(c.requested_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <Button onClick={() => setSelectedConsultation(c)}>
+                      Assign Doctor
+                    </Button>
                   </div>
-                  <Button onClick={() => setSelectedConsultation(c)}>
-                    Assign Doctor
-                  </Button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No pending requests.</p>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <p>No pending requests.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {selectedConsultation && (
         <AssignDoctorModal

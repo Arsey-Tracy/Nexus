@@ -5,6 +5,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { Skeleton } from "../ui/skeleton";
 
 export function ProtectedRoute({
   allowedRoles,
@@ -35,8 +36,10 @@ export function ProtectedRoute({
   // show a loader while auth initializes to avoid blank page
   if (loading) {
     return (
+      // we can add a skeleton loader here
       <div className="flex items-center justify-center p-8">
-        <div>Loading...</div>
+        <Skeleton></Skeleton>
+        {/* <div>Loading...</div> */}
       </div>
     );
   }

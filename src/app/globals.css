@@ -46,6 +46,13 @@
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
+  /* Brand tokens (used for unified UI) */
+  --brand: #0ea5e9; /* sky-500 */
+  --brand-600: #0284c7;
+  --surface: #ffffff;
+  --muted-2: #6b7280;
+  --ui-radius: 0.5rem;
+  --card-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -129,4 +136,11 @@ html {
 }
 .animate-fade-in {
   animation: fade-in 1s ease;
+}
+
+/* Small helper to unify card look across dashboards */
+.app-card {
+  background: var(--surface);
+  border-radius: var(--ui-radius);
+  box-shadow: var(--card-shadow);
 }

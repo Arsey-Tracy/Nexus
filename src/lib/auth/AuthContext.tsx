@@ -6,7 +6,13 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentUser } from "@/lib/api/auth";
 import { setAuthToken } from "@/lib/api/api";
 
-type User = any;
+type User = {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  user_type?: string;
+  [key: string]: unknown;
+} | null;
 
 type AuthContextType = {
   user: User | null;
@@ -54,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           } catch (err) {
             // token invalid or expired: clear it
+            console.error(err);
             localStorage.removeItem("access");
             localStorage.removeItem("token");
             setAuthToken(null);

@@ -30,6 +30,7 @@ import {
   getMyConsultations,
 } from "@/lib/api/consultations";
 import { Video, Home, X, Calendar, Clock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Add these status color mappings
 const statusColors = {
@@ -111,7 +112,9 @@ ${address ? `Address: ${address}` : ""}
 
       await requestConsultation(symptoms, consultationNotes);
       onSuccess();
-    } catch (err) {
+    } catch (_err) {
+      // log for diagnostics
+      console.error(_err);
       setError("Failed to submit request. Please try again.");
     } finally {
       setLoading(false);
@@ -419,7 +422,8 @@ function ReviewModal({
     try {
       await createReview(consultation.id, rating, comment);
       onReviewed();
-    } catch (error) {
+    } catch (_error) {
+      console.error(_error);
       alert("Failed to submit review.");
     } finally {
       setLoading(false);
@@ -478,7 +482,8 @@ export default function PatientDashboard() {
       const data = await getMyConsultations();
       setConsultations(data);
       setError(null);
-    } catch (err) {
+    } catch (_err) {
+      console.error(_err);
       setError("Failed to fetch consultations.");
     } finally {
       setLoading(false);
@@ -493,6 +498,22 @@ export default function PatientDashboard() {
     setShowBookingModal(false);
     fetchConsultations();
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-1/3" />
+          <Skeleton className="h-8 w-20" />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          <Skeleton className="h-40" />
+          <Skeleton className="h-28" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -517,45 +538,49 @@ export default function PatientDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Card className="border-2 border-blue-200 hover:shadow-lg transition-all">
-            <CardContent className="p-6">
-              <Button
-                onClick={() => setShowBookingModal(true)}
-                className="w-full h-auto py-8 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                size="lg"
-              >
-                <Video className="w-8 h-8 mr-3" />
-                <div>
-                  <div className="font-bold">Virtual Consultation</div>
-                  <div className="text-sm opacity-90">From $50</div>
-                </div>
-              </Button>
-              <p className="text-sm text-center text-gray-600 mt-4">
-                Connect with a healthcare professional from anywhere
-              </p>
-            </CardContent>
-          </Card>
+          <div className="app-card p-0">
+            <Card className="rounded-none border-0">
+              <CardContent className="p-6">
+                <Button
+                  onClick={() => setShowBookingModal(true)}
+                  className="w-full h-auto py-8 text-lg bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                  size="lg"
+                >
+                  <Video className="w-8 h-8 mr-3" />
+                  <div>
+                    <div className="font-bold">Virtual Consultation</div>
+                    <div className="text-sm opacity-90">From $50</div>
+                  </div>
+                </Button>
+                <p className="text-sm text-center text-gray-600 mt-4">
+                  Connect with a healthcare professional from anywhere
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </motion.div>
 
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Card className="border-2 border-green-200 hover:shadow-lg transition-all">
-            <CardContent className="p-6">
-              <Button
-                onClick={() => setShowBookingModal(true)}
-                className="w-full h-auto py-8 text-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                size="lg"
-              >
-                <Home className="w-8 h-8 mr-3" />
-                <div>
-                  <div className="font-bold">Home Visit</div>
-                  <div className="text-sm opacity-90">From $150</div>
-                </div>
-              </Button>
-              <p className="text-sm text-center text-gray-600 mt-4">
-                Get medical care in the comfort of your home
-              </p>
-            </CardContent>
-          </Card>
+          <div className="app-card p-0">
+            <Card className="rounded-none border-0">
+              <CardContent className="p-6">
+                <Button
+                  onClick={() => setShowBookingModal(true)}
+                  className="w-full h-auto py-8 text-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                  size="lg"
+                >
+                  <Home className="w-8 h-8 mr-3" />
+                  <div>
+                    <div className="font-bold">Home Visit</div>
+                    <div className="text-sm opacity-90">From $150</div>
+                  </div>
+                </Button>
+                <p className="text-sm text-center text-gray-600 mt-4">
+                  Get medical care in the comfort of your home
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </motion.div>
       </div>
 

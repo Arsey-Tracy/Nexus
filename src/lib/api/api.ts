@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Robust frontend API utility for handling requests/responses.
  * - Generic typed helpers: get/post/put/patch/delete
@@ -7,8 +8,6 @@
  * - Timeout (abort) support
  * - Detailed APIError with parsed validation messages
  */
-
-type Json = Record<string, any> | any[] | string | number | boolean | null;
 
 export class APIError extends Error {
   status: number;
@@ -137,7 +136,7 @@ async function request<T = any>(
     if (authToken) finalHeaders["Authorization"] = `Bearer ${authToken}`;
   }
 
-  let fetchOptions: RequestInit = {
+  const fetchOptions: RequestInit = {
     method,
     headers: finalHeaders,
     signal,

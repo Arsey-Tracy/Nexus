@@ -9,7 +9,7 @@ const roles = [
   { id: "patient", label: "Patient", icon: "👤" },
   { id: "doctor", label: "Doctor", icon: "🩺" },
   // { id: "nurse", label: "Nurse", icon: "👩‍⚕️" },
-  // { id: "admin", label: "Admin", icon: "🛡️" },
+  { id: "admin", label: "Admin", icon: "🛡️" },
 ];
 
 export function RoleSelector({

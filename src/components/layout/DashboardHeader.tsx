@@ -95,19 +95,24 @@ const DashboardHeader = () => {
 
       {/* Placeholder for search or breadcrumbs (optional) */}
       <div className="hidden md:block">
-        <h2 className="text-lg font-semibold text-gray-700">
-          Doctor Dashboard
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-700">Dashboard</h2>
       </div>
 
       {/* Avatar Dropdown */}
       <div className="ml-auto">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+            <Button
+              variant="ghost"
+              className="relative h-10 w-10 rounded-full border border-gray-100 hover:border-gray-200"
+            >
               <Avatar className="h-10 w-10">
                 <AvatarImage
-                  src={user?.profile_picture_url || ""}
+                  src={
+                    typeof user?.profile_picture_url === "string"
+                      ? user.profile_picture_url
+                      : undefined
+                  }
                   alt="User avatar"
                 />
                 <AvatarFallback className="bg-sky-100 text-sky-700 font-semibold">

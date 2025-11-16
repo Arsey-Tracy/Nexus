@@ -8,14 +8,10 @@ import { loginUser } from "@/lib/api/auth";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AuthLayout } from "./AuthLayout";
-import { Eye, EyeOff, KeyRound, Link, Mail } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Mail } from "lucide-react";
+import NextLink from "next/link";
 
 /**
  * SignInForm
@@ -58,6 +54,9 @@ export function SignInForm() {
     }
   };
 
+  // using `any` here because backend responses vary between endpoints
+  // allow `any` here because backend response shapes vary across endpoints
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const detectRoleFromResponse = (res: any): string | undefined => {
     // 1) direct value if backend returned it
     if (res?.user?.user_type) return res.user.user_type;
@@ -96,7 +95,7 @@ export function SignInForm() {
 
       const role = detectRoleFromResponse(data) ?? user?.user_type;
       redirectByRole(role);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // try to extract backend validation errors
       if (err instanceof Error) {
         setError(err.message);
@@ -179,12 +178,12 @@ export function SignInForm() {
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
-                <Link
+                <NextLink
                   href="/register"
                   className="font-medium text-blue-600 hover:underline"
                 >
-                  Don't have an account? Sign Up
-                </Link>
+                  Don&apos;t have an account? Sign Up
+                </NextLink>
               </p>
             </CardFooter>
           </Card>
