@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Patient {
   first_name: string;
   last_name: string;
+  phone_number: string;
 }
 
 interface Consultation {
@@ -112,15 +113,15 @@ export default function DoctorDashboard() {
                     <div className="flex items-center space-x-2">
                       <Button
                         asChild
-                        disabled={!c.meeting_link}
+                        disabled={!c.patient.phone_number}
                         variant="default"
                       >
                         <a
-                          href={c.meeting_link}
+                          href={`tel:${c.patient.phone_number}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          Join Call
+                          Call Patient
                         </a>
                       </Button>
                       <Button

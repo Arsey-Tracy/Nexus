@@ -20,9 +20,6 @@ import {
   getAvailableDoctors,
   assignDoctorToConsultation,
 } from "@/lib/api/consultations";
-import Link from "next/link";
-import { Badge, Bell, Heart, LogOut, Settings } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 
 function AssignDoctorModal({
   consultation,
@@ -145,50 +142,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen max-w-7xl mx-auto p-6 space-y-6">
-      <header>
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg">
-                  <Heart className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold mb-6">NexusCareUG</span>
-              </Link>
-              <Badge className="text-3xl font-bold mb-6">Admin Portal</Badge>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-red-500 text-white text-xs">
-                  8
-                </Badge>
-              </Button>
-
-              <div className="flex items-center space-x-3">
-                <Avatar>
-                  <AvatarImage src="/avatars/admin.jpg" />
-                  <AvatarFallback>AD</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">Admin User</p>
-                  <p className="text-sm text-gray-500">System Administrator</p>
-                </div>
-              </div>
-
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-
-              <Button variant="ghost" size="sm">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="app-card p-0">
         <Card className="rounded-none">
           <CardHeader>

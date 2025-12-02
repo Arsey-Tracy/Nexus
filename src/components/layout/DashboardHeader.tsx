@@ -22,27 +22,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Menu,
-  X,
-  LayoutDashboard,
-  Users,
-  Calendar,
-  MessageSquare,
-  Settings,
-} from "lucide-react";
-
-// Re-define links for the mobile drawer
-const mobileSidebarLinks = [
-  { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/doctor/patients", label: "My Patients", icon: Users },
-  { href: "/doctor/schedule", label: "Schedule", icon: Calendar },
-  { href: "/doctor/messages", label: "Messages", icon: MessageSquare },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+import { Menu, X } from "lucide-react";
+import { ROLE_SIDEBAR_LINKS } from "@/lib/navLinks";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
+  // Determine role and corresponding links for mobile drawer
+  const userRole = (user?.user_type || user?.role || "patient")
+    .toString()
+    .toLowerCase();
+  const mobileSidebarLinks = ROLE_SIDEBAR_LINKS[userRole] || [];
 
   const getInitials = () => {
     if (!user) return "U";

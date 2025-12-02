@@ -5,7 +5,7 @@ import { get, post, patch } from "./api"; // Assuming you have a base api utilit
 // Type definitions based on your Django models
 export interface Consultation {
   id: number;
-  patient: { id: number; first_name: string; last_name: string };
+  patient: { id: number; first_name: string; last_name: string; phone_number: string };
   doctor: { id: number; first_name: string; last_name: string } | null;
   symptoms: string;
   notes?: string;
@@ -26,17 +26,33 @@ export interface Doctor {
   // Add other fields as needed
 }
 
-// This interface defines the NEW response from requestConsultation
+// This interface defines the response from requestConsultation
+// The backend returns either just the consultation, or consultation + payment_link
 export interface ConsultationRequestResponse {
-  consultation: Consultation;
-  payment_link: string;
+  consultation?: Consultation;
+  payment_link?: string;
+  id?: number;
+  // patient?: any;
+  // doctor?: any;
+  patient?: Consultation['patient'];
+  doctor?: Consultation['doctor'];
+  symptoms?: string;
+  notes?: string;
+  status?: string;
+  // [key: string]: any;
+  [key: string]: unknown;
 }
+
 // For Patients: Request a new consultation
-export const requestConsultation = (symptoms: string, notes?: string) => {
-  // The function now returns a promise resolving to the new response type
+export const requestConsultation = (symptoms: string, notes?: string, consultationType?: "virtual" | "bedside") => {
+  // The function returns the consultation response from the backend
+  // Can be either a Consultation object directly or a ConsultationRequestResponse with payment_link
+  // Include payment_status as required by Django backend
   return post<ConsultationRequestResponse>("/consultation/consultations/request/", {
     symptoms,
     notes,
+    consultation_type: consultationType || "virtual",
+    payment_status: "pending", // Default payment status
   });
 };
 

@@ -167,10 +167,16 @@ async function request<T = any>(
   try {
     const res = await Promise.race([fetch(url, fetchOptions), timeoutPromise(timeout, controller)]) as Response;
     const parsed = await parseResponse(res);
+    
+    // Log successful requests for debugging
     if (res.ok) {
+      console.debug(`[API] ${method} ${url} - 200 OK`);
       return parsed as T;
     }
 
+    // Log error requests
+    console.error(`[API] ${method} ${url} - ${res.status}`, parsed);
+    
     // parse errors: DRF returns object of field -> [messages]
     if (typeof parsed === "object" && parsed !== null) {
       throw new APIError("Request failed", res.status, parsed);

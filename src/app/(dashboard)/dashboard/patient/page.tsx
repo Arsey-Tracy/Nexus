@@ -110,12 +110,58 @@ ${preferredTime ? `Preferred Time: ${preferredTime}` : ""}
 ${address ? `Address: ${address}` : ""}
       `.trim();
 
-      await requestConsultation(symptoms, consultationNotes);
-      onSuccess();
-    } catch (_err) {
+      const response = await requestConsultation(
+        symptoms,
+        consultationNotes,
+        consultationType as "virtual" | "bedside"
+      );
+      console.log("Consultation request response:", response);
+
+      // Handle both response types:
+      // 1. Direct Consultation object
+      // 2. ConsultationRequestResponse with consultation + payment_link
+      if (response) {
+        // If there's a payment_link, redirect to payment
+        if (response.payment_link) {
+          window.location.href = response.payment_link;
+        } else {
+          // Otherwise, show success and refresh
+          alert(
+            "Consultation request submitted successfully! You will be contacted shortly."
+          );
+          onSuccess();
+        }
+      }
+    } catch (_err: unknown) {
+      // FIX: Changed 'any' to 'unknown'
       // log for diagnostics
-      console.error(_err);
-      setError("Failed to submit request. Please try again.");
+      console.error("Consultation submission error:", _err);
+
+      // Extract detailed error message from backend validation errors
+      let errorMessage = "Failed to submit request. Please try again.";
+      // Use type assertion to safey access expected properties for error handling
+      const err = _err as { data?: unknown };
+      if (err?.data) {
+        // Handle Django REST Framework validation errors
+        if (typeof err.data === "object") {
+          const errors: string[] = [];
+          Object.entries(err.data).forEach(
+            ([field, messages]: [string, unknown]) => {
+              if (Array.isArray(messages)) {
+                errors.push(`${field}: ${messages.join(", ")}`);
+              } else if (typeof messages === "string") {
+                errors.push(`${field}: ${messages}`);
+              }
+            }
+          );
+          if (errors.length > 0) {
+            errorMessage = errors.join("\n");
+          }
+        } else if (typeof err.data === "string") {
+          errorMessage = err.data;
+        }
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -483,12 +529,30 @@ export default function PatientDashboard() {
       setConsultations(data);
       setError(null);
     } catch (_err) {
-      console.error(_err);
-      setError("Failed to fetch consultations.");
+      console.error("Failed to fetch consultations:", _err);
+      // Show mock data when API fails, with a fallback message
+      setConsultations([
+        {
+          id: 1,
+          patient: {
+            id: 1,
+            first_name: user?.first_name || "Patient",
+            last_name: user?.last_name || "User",
+            phone_number: "",
+          },
+          doctor: { id: 1, first_name: "Smith", last_name: "Dr." },
+          symptoms: "Regular checkup",
+          status: "completed" as const,
+          requested_at: new Date().toISOString(),
+          scheduled_time: new Date().toISOString(),
+          completed_at: new Date().toISOString(),
+        },
+      ]);
+      setError("Backend is currently unavailable. Showing sample data.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user?.first_name, user?.last_name]);
 
   useEffect(() => {
     fetchConsultations();
