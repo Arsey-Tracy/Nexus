@@ -163,14 +163,14 @@ export function SignInForm() {
                   className="pl-10 pr-10"
                   required
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                </Button>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
@@ -178,11 +178,12 @@ export function SignInForm() {
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
+                Don&apos;t have an account?
                 <NextLink
                   href="/register"
                   className="font-medium text-blue-600 hover:underline"
                 >
-                  Don&apos;t have an account? Sign Up
+                  Sign Up
                 </NextLink>
               </p>
             </CardFooter>

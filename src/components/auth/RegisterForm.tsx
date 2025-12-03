@@ -216,14 +216,14 @@ export function RegisterForm() {
                   autoComplete="new-password"
                   className="pl-10 pr-10 w-full"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+                </Button>
               </div>
               <div className="relative">
                 <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -237,7 +237,7 @@ export function RegisterForm() {
                   autoComplete="new-password"
                   className="pl-10 pr-10"
                 />
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
@@ -248,7 +248,7 @@ export function RegisterForm() {
                   ) : (
                     <Eye size={20} />
                   )}
-                </button>
+                </Button>
               </div>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -267,11 +267,12 @@ export function RegisterForm() {
                 {loading ? "Creating Account..." : "Create Account"}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
+                Already have an account?
                 <Link
                   href="/signin"
                   className="font-medium text-blue-600 hover:underline"
                 >
-                  Already have an account? Sign In
+                  Sign In
                 </Link>
               </p>
             </CardFooter>
