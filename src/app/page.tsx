@@ -4,7 +4,7 @@ import React from "react";
 import HeroSection from "@/components/sections/HeroSection";
 import ServicesIntroSection from "@/components/sections/ServicesIntroSection";
 import AboutUsTeaserSection from "@/components/sections/AboutUsTeaserSection";
-import ProjectsSection from "@/components/sections/ProjectsSection";
+// import ProjectsSection from "@/components/sections/ProjectsSection";
 import ContactFormSection from "@/components/sections/ContactFormSection";
 import ContactInfoSection from "@/components/sections/ContactInfoSection";
 import ServicesDetailSection from "@/components/sections/ServicesDetailSection";
@@ -20,7 +20,7 @@ const Index = () => {
       <CTASection />
       <ServicesIntroSection />
       <ServicesDetailSection />
-      <ProjectsSection />
+      {/* <ProjectsSection /> */}
       <AboutUsTeaserSection />
       <ContactInfoSection />
       <ContactFormSection />

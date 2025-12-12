@@ -3,8 +3,9 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Stethoscope } from "lucide-react";
+// import { Stethoscope } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext"; // 1. Import useAuth
 import { ROLE_SIDEBAR_LINKS } from "@/lib/navLinks"; // 2. Import the role map
 
@@ -28,7 +29,14 @@ const DashboardSidebar = () => {
         className="text-2xl font-bold text-sky-600 hover:text-sky-700 flex items-center mb-8"
         aria-label="NexusCare Home"
       >
-        <Stethoscope className="h-8 w-8 mr-2 text-sky-500" />
+        {/* <Stethoscope className="h-8 w-8 mr-2 text-sky-500" /> */}
+        <Image
+          src="/nexuslogo.jpg"
+          alt="nexuscare logo"
+          width={50}
+          height={50}
+          className="box-border object-cover"
+        />
         NexusCare
       </Link>
 

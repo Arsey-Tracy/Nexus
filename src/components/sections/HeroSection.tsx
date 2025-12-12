@@ -30,20 +30,20 @@ const HeroSection = ({
         <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">{subtitle}</p>
         {showCta && (
           <div className="space-x-4">
-            <Button
+            {/* <Button
               asChild
               size="lg"
               className="bg-white text-sky-600 hover:bg-gray-100 cursor-pointer"
             >
               <Link href="/learn-more">Learn More</Link>
-            </Button>
+            </Button> */}
             <Button
               asChild
               variant="outline"
               size="lg"
               className="bg-white text-sky-600 hover:bg-gray-100 cursor-pointer"
             >
-              <Link href="/get-started">Get Started</Link>
+              <Link href="/register">Get Started</Link>
             </Button>
           </div>
         )}

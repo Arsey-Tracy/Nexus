@@ -31,7 +31,6 @@ import {
 } from "@/lib/api/consultations";
 import { Video, Home, X, Calendar, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-
 // Add these status color mappings
 const statusColors = {
   pending: {
@@ -103,12 +102,11 @@ function ConsultationModal({
     setError(null);
     try {
       const consultationNotes = `
-${notes}
-Type: ${consultationType}
-${preferredDate ? `Preferred Date: ${preferredDate}` : ""}
-${preferredTime ? `Preferred Time: ${preferredTime}` : ""}
-${address ? `Address: ${address}` : ""}
-      `.trim();
+            ${notes}
+            Type: ${consultationType}
+            ${preferredDate ? `Preferred Date: ${preferredDate}` : ""}
+            ${preferredTime ? `Preferred Time: ${preferredTime}` : ""}
+            ${address ? `Address: ${address}` : ""}`.trim();
 
       const response = await requestConsultation(
         symptoms,
@@ -179,267 +177,531 @@ ${address ? `Address: ${address}` : ""}
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Book Consultation</h2>
-          <button
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-semibold text-white">
+              Book Your Consultation
+            </h2>
+            <p className="text-blue-100 text-sm mt-1">
+              Quick and easy scheduling
+            </p>
+          </div>
+          <Button
+            type="button"
             onClick={() => {
               resetForm();
               onClose();
             }}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
             aria-label="Close modal"
           >
-            <X className="w-6 h-6" />
-          </button>
+            <X className="w-5 h-5" />
+          </Button>
         </div>
 
-        <div className="p-6">
-          {/* Step Indicator */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= 1 ? "bg-blue-600 text-white" : "bg-gray-200"
-                }`}
-              >
-                1
-              </div>
-              <div
-                className={`w-16 h-1 ${
-                  step >= 2 ? "bg-blue-600" : "bg-gray-200"
-                }`}
-              />
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= 2 ? "bg-blue-600 text-white" : "bg-gray-200"
-                }`}
-              >
-                2
-              </div>
-              <div
-                className={`w-16 h-1 ${
-                  step >= 3 ? "bg-blue-600" : "bg-gray-200"
-                }`}
-              />
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= 3 ? "bg-blue-600 text-white" : "bg-gray-200"
-                }`}
-              >
-                3
-              </div>
-            </div>
-          </div>
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6 md:p-8">
+            {/* Step Indicator */}
+            <div className="flex items-center justify-center mb-10">
+              <div className="flex items-center w-full max-w-md">
+                {/* Step 1 */}
+                <div className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                      step >= 1
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 text-gray-500"
+                    }`}
+                  >
+                    {step > 1 ? "✓" : "1"}
+                  </div>
+                  <span className="text-xs mt-2 text-gray-600 font-medium">
+                    Select Type
+                  </span>
+                </div>
 
-          {/* Step 1: Choose Type */}
-          {step === 1 && (
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-center mb-6">
-                Choose Consultation Type
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button
-                  onClick={() => handleTypeSelection("virtual")}
-                  className="p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center"
-                >
-                  <Video className="w-12 h-12 mx-auto mb-4 text-blue-600" />
-                  <h4 className="font-semibold text-lg mb-2">
-                    Virtual Consultation
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Video call with a doctor from the comfort of your home
-                  </p>
-                  <p className="text-blue-600 font-semibold mt-3">$50</p>
-                </button>
-                <button
-                  onClick={() => handleTypeSelection("bedside")}
-                  className="p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all text-center"
-                >
-                  <Home className="w-12 h-12 mx-auto mb-4 text-green-600" />
-                  <h4 className="font-semibold text-lg mb-2">
-                    Bedside Service
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    A doctor will visit you at your location
-                  </p>
-                  <p className="text-green-600 font-semibold mt-3">$150</p>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Details */}
-          {step === 2 && (
-            <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                <p className="font-semibold">
-                  Selected:{" "}
-                  {consultationType === "virtual"
-                    ? "Virtual Consultation"
-                    : "Bedside Service"}
-                </p>
-              </div>
-
-              <div>
-                <label htmlFor="symptoms" className="font-semibold block mb-2">
-                  Symptoms*
-                </label>
-                <Textarea
-                  id="symptoms"
-                  value={symptoms}
-                  onChange={(e) => setSymptoms(e.target.value)}
-                  placeholder="e.g., persistent headache, fever for 3 days"
-                  rows={4}
+                {/* Connector */}
+                <div
+                  className={`h-1 flex-1 mx-2 rounded transition-all ${
+                    step >= 2 ? "bg-blue-600" : "bg-gray-200"
+                  }`}
                 />
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Step 2 */}
+                <div className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                      step >= 2
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 text-gray-500"
+                    }`}
+                  >
+                    {step > 2 ? "✓" : "2"}
+                  </div>
+                  <span className="text-xs mt-2 text-gray-600 font-medium">
+                    Details
+                  </span>
+                </div>
+
+                {/* Connector */}
+                <div
+                  className={`h-1 flex-1 mx-2 rounded transition-all ${
+                    step >= 3 ? "bg-blue-600" : "bg-gray-200"
+                  }`}
+                />
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                      step >= 3
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-gray-200 text-gray-500"
+                    }`}
+                  >
+                    3
+                  </div>
+                  <span className="text-xs mt-2 text-gray-600 font-medium">
+                    Payment
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 1: Choose Type */}
+            {step === 1 && (
+              <div className="space-y-6">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                    Choose Your Consultation Type
+                  </h3>
+                  <p className="text-gray-600">
+                    Select the option that works best for you
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Virtual Consultation Card */}
+                  <button
+                    type="button"
+                    onClick={() => handleTypeSelection("virtual")}
+                    className="group p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all text-left bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    <div className="flex flex-col h-full">
+                      <div className="bg-blue-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                        <Video className="w-7 h-7 text-blue-600" />
+                      </div>
+                      <h4 className="font-semibold text-lg mb-2 text-gray-800">
+                        Virtual Consultation
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4 flex-grow">
+                        Connect with a doctor via secure video call from
+                        anywhere
+                      </p>
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-blue-600 font-bold text-xl">
+                          UGX 50,000
+                        </span>
+                        <span className="text-xs text-gray-500">~30 mins</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Bedside Service Card */}
+                  <button
+                    type="button"
+                    onClick={() => handleTypeSelection("bedside")}
+                    className="group p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all text-left bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    <div className="flex flex-col h-full">
+                      <div className="bg-green-50 w-14 h-14 rounded-lg flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                        <Home className="w-7 h-7 text-green-600" />
+                      </div>
+                      <h4 className="font-semibold text-lg mb-2 text-gray-800">
+                        Bedside Service
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4 flex-grow">
+                        A qualified doctor visits you at your preferred location
+                      </p>
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-green-600 font-bold text-xl">
+                          UGX 70,000
+                        </span>
+                        <span className="text-xs text-gray-500">~45 mins</span>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-blue-100 rounded-full p-1 mt-0.5">
+                      <svg
+                        className="w-4 h-4 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-sm text-blue-800">
+                      All consultations are conducted by licensed medical
+                      professionals. Your privacy and health information are
+                      protected.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Details */}
+            {step === 2 && (
+              <div className="space-y-6">
+                {/* Selected Type Badge */}
+                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {consultationType === "virtual" ? (
+                        <Video className="w-5 h-5 text-blue-600" />
+                      ) : (
+                        <Home className="w-5 h-5 text-green-600" />
+                      )}
+                      <span className="font-semibold text-gray-800">
+                        {consultationType === "virtual"
+                          ? "Virtual Consultation"
+                          : "Bedside Service"}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    >
+                      Change
+                    </button>
+                  </div>
+                </div>
+
+                {/* Symptoms Field */}
                 <div>
                   <label
-                    htmlFor="preferredDate"
-                    className="font-semibold block mb-2"
+                    htmlFor="symptoms"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
                   >
-                    <Calendar className="w-4 h-4 inline mr-1" />
-                    Preferred Date
-                  </label>
-                  <Input
-                    type="date"
-                    id="preferredDate"
-                    value={preferredDate}
-                    onChange={(e) => setPreferredDate(e.target.value)}
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="preferredTime"
-                    className="font-semibold block mb-2"
-                  >
-                    <Clock className="w-4 h-4 inline mr-1" />
-                    Preferred Time
-                  </label>
-                  <Input
-                    type="time"
-                    id="preferredTime"
-                    value={preferredTime}
-                    onChange={(e) => setPreferredTime(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {consultationType === "bedside" && (
-                <div>
-                  <label htmlFor="address" className="font-semibold block mb-2">
-                    Address*
+                    What symptoms are you experiencing?{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <Textarea
-                    id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Enter your full address including street, city, and postal code"
+                    id="symptoms"
+                    value={symptoms}
+                    onChange={(e) => setSymptoms(e.target.value)}
+                    placeholder="Please describe your symptoms in detail (e.g., persistent headache, fever for 3 days, difficulty breathing)"
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Be as specific as possible to help the doctor prepare
+                  </p>
+                </div>
+
+                {/* Date and Time */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="preferredDate"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      <Calendar className="w-4 h-4 inline mr-1" />
+                      Preferred Date
+                    </label>
+                    <Input
+                      type="date"
+                      id="preferredDate"
+                      value={preferredDate}
+                      onChange={(e) => setPreferredDate(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="preferredTime"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      <Clock className="w-4 h-4 inline mr-1" />
+                      Preferred Time
+                    </label>
+                    <Input
+                      type="time"
+                      id="preferredTime"
+                      value={preferredTime}
+                      onChange={(e) => setPreferredTime(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Address for Bedside */}
+                {consultationType === "bedside" && (
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Your Address <span className="text-red-500">*</span>
+                    </label>
+                    <Textarea
+                      id="address"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Enter your complete address including building/house number, street name, landmarks, and area"
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    />
+                  </div>
+                )}
+
+                {/* Additional Notes */}
+                <div>
+                  <label
+                    htmlFor="notes"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Additional Information{" "}
+                    <span className="text-gray-400 font-normal">
+                      (optional)
+                    </span>
+                  </label>
+                  <Textarea
+                    id="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Any allergies, current medications, or other relevant medical history"
                     rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   />
                 </div>
-              )}
 
-              <div>
-                <label htmlFor="notes" className="font-semibold block mb-2">
-                  Additional Notes (optional)
-                </label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="e.g., any known allergies, current medications"
-                  rows={3}
-                />
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex justify-between pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                >
-                  Back
-                </Button>
-                <Button type="button" onClick={handleContinueToPayment}>
-                  Continue to Payment
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Payment */}
-          {step === 3 && (
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold mb-4">Confirm & Pay</h3>
-
-              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                <div className="flex justify-between">
-                  <span className="font-semibold">Consultation Type:</span>
-                  <span className="capitalize">
-                    {consultationType?.replace("_", " ")}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">Amount:</span>
-                  <span className="text-lg font-bold text-blue-600">
-                    ${consultationType === "virtual" ? "50" : "150"}
-                  </span>
-                </div>
-                {preferredDate && (
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Preferred Date:</span>
-                    <span>{new Date(preferredDate).toLocaleDateString()}</span>
+                {/* Error Message */}
+                {error && (
+                  <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <p className="text-sm text-red-700 font-medium">
+                        {error}
+                      </p>
+                    </div>
                   </div>
                 )}
-                {preferredTime && (
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Preferred Time:</span>
-                    <span>{preferredTime}</span>
+
+                {/* Action Buttons */}
+                <div className="flex justify-between pt-4 gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleContinueToPayment}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md hover:shadow-lg"
+                  >
+                    Continue to Payment →
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Payment */}
+            {step === 3 && (
+              <div className="space-y-6">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+                    Review & Confirm
+                  </h3>
+                  <p className="text-gray-600">
+                    Please verify your booking details
+                  </p>
+                </div>
+
+                {/* Summary Card */}
+                <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border-2 border-gray-200 space-y-4">
+                  <div className="flex items-start justify-between pb-4 border-b border-gray-200">
+                    <div className="flex items-center gap-3">
+                      {consultationType === "virtual" ? (
+                        <div className="bg-blue-100 p-2 rounded-lg">
+                          <Video className="w-5 h-5 text-blue-600" />
+                        </div>
+                      ) : (
+                        <div className="bg-green-100 p-2 rounded-lg">
+                          <Home className="w-5 h-5 text-green-600" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Consultation Type
+                        </p>
+                        <p className="font-semibold text-gray-800 capitalize">
+                          {consultationType?.replace("_", " ")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {preferredDate && preferredTime && (
+                    <div className="flex items-start gap-3 pb-4 border-b border-gray-200">
+                      <div className="bg-blue-100 p-2 rounded-lg">
+                        <Calendar className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 font-medium">
+                          Scheduled For
+                        </p>
+                        <p className="font-semibold text-gray-800">
+                          {new Date(preferredDate).toLocaleDateString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+                        <p className="text-sm text-gray-600">{preferredTime}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-4 bg-blue-50 -mx-6 px-6 py-4 rounded-b-xl">
+                    <div>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Total Amount
+                      </p>
+                      <p className="text-3xl font-bold text-blue-600">
+                        UGX{" "}
+                        {consultationType === "virtual" ? "50,000" : "70,000"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500">Secure payment</p>
+                      <div className="flex gap-1 mt-1">
+                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
+                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
+                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Info */}
+                <div className="p-4 bg-green-50 rounded-lg border border-green-100">
+                  <div className="flex items-start gap-3">
+                    <svg
+                      className="w-5 h-5 text-green-600 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-sm font-semibold text-green-800">
+                        Secure Payment Processing
+                      </p>
+                      <p className="text-xs text-green-700 mt-1">
+                        Your payment information is encrypted and protected
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                    <div className="flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <p className="text-sm text-red-700 font-medium">
+                        {error}
+                      </p>
+                    </div>
                   </div>
                 )}
-              </div>
 
-              <div className="p-6 bg-blue-50 border-2 border-blue-200 rounded-lg text-center">
-                <p className="font-semibold text-lg mb-2">
-                  Payment Integration
-                </p>
-                <p className="text-sm text-gray-600">
-                  Secure payment gateway (Stripe/PayPal) would be integrated
-                  here
-                </p>
-              </div>
-
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600">
-                  {error}
+                {/* Action Buttons */}
+                <div className="flex justify-between pt-4 gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <svg
+                          className="animate-spin h-5 w-5"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : (
+                      "Confirm & Pay"
+                    )}
+                  </Button>
                 </div>
-              )}
-
-              <div className="flex justify-between pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep(2)}
-                >
-                  Back
-                </Button>
-                <Button onClick={handleSubmit} disabled={loading}>
-                  {loading ? "Processing..." : "Confirm & Pay"}
-                </Button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -636,7 +898,7 @@ export default function PatientDashboard() {
                   <Home className="w-8 h-8 mr-3" />
                   <div>
                     <div className="font-bold">Home Visit</div>
-                    <div className="text-sm opacity-90">From $150</div>
+                    <div className="text-sm opacity-90">From UGX 70000</div>
                   </div>
                 </Button>
                 <p className="text-sm text-center text-gray-600 mt-4">

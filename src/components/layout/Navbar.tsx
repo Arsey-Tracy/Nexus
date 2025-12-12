@@ -19,7 +19,7 @@ import {
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services" },
-  { to: "/projects", label: "Projects" },
+  // { to: "/projects", label: "Projects" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact" },
   // { to: "/signin", label: "Sign In" },
