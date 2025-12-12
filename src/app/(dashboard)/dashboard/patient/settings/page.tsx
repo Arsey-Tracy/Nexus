@@ -6,19 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Sliders } from "lucide-react";
-import { useAuth } from "@/lib/auth/AuthContext";
-interface Patient {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-}
+// import { useAuth } from "@/lib/auth/AuthContext";
+// interface Patient {
+//   first_name: string;
+//   last_name: string;
+//   phone_number: string;
+// }
 
-interface Profile {
-  id: number;
-  patient: Patient;
-}
+// interface Profile {
+//   id: number;
+//   patient: Patient;
+// }
 const SettingsPage = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   type NotificationSettings = {
     email: boolean;
