@@ -1,14 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  experimental: {
-    turbo: {
-      rules: {
-        // Disable the experimental font loading
-        "*.woff2": ["raw"],
-      },
-    },
-  },
+  // Configuration options can be added here
 };
 
 export default config;

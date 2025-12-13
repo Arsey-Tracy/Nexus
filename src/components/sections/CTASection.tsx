@@ -51,7 +51,7 @@ const CTASection = () => {
               </p>
               <div className="space-y-3">
                 <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer">
-                  <Link href="/register">Order Bedside Nurse</Link>
+                  <Link href="/re">Order Bedside Nurse</Link>
                 </Button>
               </div>
             </CardContent>
@@ -85,7 +85,7 @@ const CTASection = () => {
               </p>
               <div className="space-y-3">
                 <Button className="w-full bg-sky-600 hover:bg-sky-700 text-white cursor-pointer">
-                  <Link href="/register">Start Consultation</Link>
+                  <Link href="/re">Start Consultation</Link>
                 </Button>
               </div>
             </CardContent>
