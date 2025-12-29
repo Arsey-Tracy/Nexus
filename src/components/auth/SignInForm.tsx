@@ -10,20 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { AuthLayout } from "./AuthLayout";
-import { Eye, EyeOff, KeyRound, Mail } from "lucide-react";
+// Replaced Loader2 with Loader to improve compatibility with older lucide-react versions
+import {
+  Eye,
+  EyeOff,
+  KeyRound,
+  Mail,
+  AlertCircle,
+  Loader,
+  LogIn,
+} from "lucide-react";
 import NextLink from "next/link";
-
-/**
- * SignInForm
- * - calls backend loginUser
- * - stores tokens via AuthContext.login
- * - redirects user to role dashboard after successful login
- *
- * The redirect logic uses (in order):
- * 1) user.user_type returned by the backend (if present)
- * 2) heuristic based on profile fields returned by the backend
- * 3) fallback to / (home)
- */
 
 export function SignInForm() {
   const router = useRouter();
@@ -34,15 +31,11 @@ export function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  // snippet to use in RegisterForm/SignInForm redirectByRole
   const redirectByRole = (userType: string) => {
     switch (userType) {
       case "doctor":
         router.replace("/dashboard/doctor");
         break;
-      // case "nurse":
-      //   router.replace("/dashboard/nurse");
-      //   break;
       case "patient":
         router.replace("/dashboard/patient");
         break;
@@ -54,20 +47,14 @@ export function SignInForm() {
     }
   };
 
-  // using `any` here because backend responses vary between endpoints
-  // allow `any` here because backend response shapes vary across endpoints
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const detectRoleFromResponse = (res: any): string | undefined => {
-    // 1) direct value if backend returned it
     if (res?.user?.user_type) return res.user.user_type;
-    // 2) profile shape heuristics
     const profile = res?.profile;
     if (!profile) return undefined;
     if ("blood_type" in profile || "emergency_contact" in profile)
       return "patient";
     if ("specialization" in profile || "license_number" in profile) {
-      // backend doesn't distinguish doctor/nurse in profile schema;
-      // prefer the user_type returned on user if it exists, otherwise default to doctor
       return res?.user?.user_type ?? "doctor";
     }
     return undefined;
@@ -80,15 +67,12 @@ export function SignInForm() {
 
     try {
       const data = await loginUser({ email, password });
-      // expected backend shape: { user, profile, access, refresh, ... }
       const access = data?.access ?? data?.token ?? null;
       const user = data?.user ?? null;
 
-      // store in AuthContext if available
       if (login && user && access) {
         login(user, access);
       } else if (access) {
-        // fallback: store tokens directly
         localStorage.setItem("access", access);
         if (data?.refresh) localStorage.setItem("refresh", data.refresh);
       }
@@ -96,11 +80,9 @@ export function SignInForm() {
       const role = detectRoleFromResponse(data) ?? user?.user_type;
       redirectByRole(role);
     } catch (err: unknown) {
-      // try to extract backend validation errors
       if (err instanceof Error) {
         setError(err.message);
       } else if (typeof err === "string") {
-        // sometimes thrown as stringified json
         try {
           const parsed = JSON.parse(err);
           if (typeof parsed === "object" && parsed !== null) {
@@ -117,7 +99,7 @@ export function SignInForm() {
           setError(err);
         }
       } else {
-        setError("Login failed");
+        setError("Login failed. Please check your credentials.");
       }
     } finally {
       setLoading(false);
@@ -127,63 +109,89 @@ export function SignInForm() {
   return (
     <AuthLayout
       title="Welcome Back"
-      subtitle="Enter your credentials to access your account."
+      subtitle="Sign in to access your health dashboard."
     >
-      <div className="w-full">
+      <div className="w-full px-4">
         <form onSubmit={handleSubmit}>
-          <Card className="border-none shadow-none">
-            <CardContent className="space-y-4 pt-6">
+          <Card className="border-none shadow-none bg-transparent">
+            <CardContent className="space-y-5 pt-2">
               {error && (
-                <div className="bg-red-50 border border-red-200 text-sm text-red-700 p-3 rounded-md">
-                  {error}
+                <div className="animate-in slide-in-from-top-2 fade-in duration-300 bg-red-50 border border-red-200 text-red-800 p-4 rounded-xl flex items-start gap-3 shadow-sm">
+                  <AlertCircle className="h-5 w-5 mt-0.5 shrink-0 text-red-600" />
+                  <div className="text-sm font-medium">{error}</div>
                 </div>
               )}
-              {/* Email Input */}
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10"
-                  required
-                />
-              </div>
-              {/* Password Input */}
-              <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10"
-                  required
-                />
-                <Button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </Button>
+
+              <div className="space-y-4">
+                <div className="relative group">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    className="pl-10 h-12 bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                    required
+                  />
+                </div>
+
+                <div className="relative group">
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    className="pl-10 pr-10 h-12 bg-gray-50/50 border-gray-200 focus:bg-white transition-all"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 p-0 text-gray-400 hover:text-gray-600 hover:bg-transparent"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <Button className="w-full" type="submit" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+
+            <CardFooter className="flex flex-col gap-5 pt-2">
+              <Button
+                className="w-full h-11 text-base font-medium shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/30"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <LogIn className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
-                Don&apos;t have an account?
+                Don&apos;t have an account?{" "}
                 <NextLink
                   href="/register"
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                 >
-                  Sign Up
+                  Create Account
                 </NextLink>
               </p>
             </CardFooter>
