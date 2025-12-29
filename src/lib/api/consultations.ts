@@ -2,19 +2,6 @@
 
 import { get, post, patch } from "./api"; // Assuming you have a base api utility
 
-export interface BedsideNursing {
-  id: number;
-  patient: { id: number; first_name: string; last_name: string; phone_number: string };
-  doctor: { id: number; first_name: string; last_name: string } | null;
-  address: string;
-  symptoms: string;
-  notes?: string
-  payment_amount?: string;
-  phone_number?: string;
-  requested_at: string;
-  scheduled_time?: string;
-  completed_at?: string;
-}
 // Type definitions based on your Django models
 export interface Consultation {
   id: number;
@@ -42,17 +29,6 @@ export interface Doctor {
 
 // This interface defines the response from requestConsultation
 // The backend returns either just the consultation, or consultation + payment_link
-export interface BedsideNursingRequestResponse {
-  bedside_nusring?: BedsideNursing;
-  payment_link?: string;
-  patient?: BedsideNursing['patient'];
-  doctor?: BedsideNursing['doctor'];
-  symptoms?: string;
-  address?: string;
-  notes?: string;
-  status?: string;
-  [key: string]: unknown;
-}
 export interface ConsultationRequestResponse {
   consultation?: Consultation;
   payment_link?: string;
@@ -67,16 +43,7 @@ export interface ConsultationRequestResponse {
   // [key: string]: any;
   [key: string]: unknown;
 }
-// For Patients: Request a new BedSide Nursing
-export const requestBedsideNursing = (symptoms: string, address: string, notes?: string) => {
-  return post<BedsideNursingRequestResponse>("/nursing/bedside/request", {
-    symptoms, address, notes, payment_status: "pending", // default status to pending
-  })
-}
 
-export const getMyBedsideNusing = () => {
-  return get<BedsideNursing[]>("/nursing/bedside/my-bedside-requests/");
-}
 // For Patients: Request a new consultation
 export const requestConsultation = (symptoms: string, notes?: string, consultationType?: "virtual" | "bedside") => {
   // The function returns the consultation response from the backend

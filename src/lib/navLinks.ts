@@ -29,7 +29,8 @@ const patientLinks: SidebarLink[] = [
   { href: "/dashboard/patient/profile", label: "Profile Settings", icon: User }, // [cite: 145]
   { href: "/dashboard/patient/history", label: "Medical History", icon: FileText }, // [cite: 146]
   { href: "/dashboard/patient/payments", label: "Payment Methods", icon: CreditCard }, // [cite: 147]
-  { href: "/dashboard/patient/messages", label: "Messages", icon: MessageSquare }, // [cite: 148]
+  // Commented out the messages page
+  // { href: "/dashboard/patient/messages", label: "Messages", icon: MessageSquare }, // [cite: 148]
   { href: "/dashboard/patient/settings", label: "Settings", icon: Settings },
 ];
 

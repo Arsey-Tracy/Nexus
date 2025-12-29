@@ -32,6 +32,8 @@ const DashboardHeader = () => {
     .toString()
     .toLowerCase();
   const mobileSidebarLinks = ROLE_SIDEBAR_LINKS[userRole] || [];
+  const profile_link = `/dashboard/${userRole}/profile`;
+  const settings_link = `/dashboard/${userRole}/settings`;
 
   const getInitials = () => {
     if (!user) return "U";
@@ -119,10 +121,12 @@ const DashboardHeader = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/profile">Profile</Link>
+              {/* <Link href="/profile">Profile</Link> */}
+
+              <Link href={profile_link}>Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/settings">Account Settings</Link>
+              <Link href={settings_link}>Account Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={logout} className="text-red-500">

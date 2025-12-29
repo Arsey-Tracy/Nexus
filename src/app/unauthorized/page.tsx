@@ -3,7 +3,7 @@
 
 import React from "react";
 
-export default function UnauthorizedPage() {
+const UnauthorizedPage = () => {
   return (
     <div className="p-8 text-center">
       <h1 className="text-2xl font-bold mb-2">Unauthorized</h1>
@@ -14,4 +14,6 @@ export default function UnauthorizedPage() {
       </p>
     </div>
   );
-}
+};
+
+export default UnauthorizedPage;
