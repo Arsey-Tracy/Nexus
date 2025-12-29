@@ -33,7 +33,7 @@ const HeroSection = ({
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-blue-500"></div>
         </div>
 
-        {/* Floating Medical Icons */}
+        {/* Floating Medical Icons for fun */}
         <div
           className="absolute top-32 right-20 animate-bounce"
           style={{ animationDelay: "0s", animationDuration: "3s" }}
