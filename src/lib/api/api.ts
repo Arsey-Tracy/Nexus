@@ -152,8 +152,12 @@ async function request<T = any>(
       // FormData or already prepared body
       fetchOptions.body = body;
       // Do not set content-type for FormData (browser will set it)
+      // Remove any manually set Content-Type for FormData
+      delete finalHeaders["Content-Type"];
     } else if (body instanceof FormData) {
       fetchOptions.body = body;
+      // Do not set content-type for FormData (browser will set it with proper boundary)
+      delete finalHeaders["Content-Type"];
     } else if (typeof body === "object") {
       finalHeaders["Content-Type"] = "application/json";
       fetchOptions.body = JSON.stringify(body);

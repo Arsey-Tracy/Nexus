@@ -45,13 +45,13 @@ const mockProjects = [
 
 const ProjectsSection = () => {
   return (
-    <section className="py-12 md:py-20 bg-slate-50">
+    <section className="py-12 md:py-20 bg-[#07101f]">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
             Support Our Projects
           </h2>
-          <p className="text-lg text-gray-600 mt-3 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-300 mt-3 max-w-2xl mx-auto">
             Your contributions help us innovate and expand healthcare
             accessibility. Join us in making a difference.
           </p>

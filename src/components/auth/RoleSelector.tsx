@@ -4,12 +4,13 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { User, Stethoscope, ShieldCheck, Check } from "lucide-react";
+// import { User, Stethoscope, ShieldCheck, Check } from "lucide-react";
+import { User, Stethoscope, Check } from "lucide-react";
 
 const roles = [
   { id: "patient", label: "Patient", icon: User },
   { id: "doctor", label: "Doctor", icon: Stethoscope },
-  { id: "admin", label: "Admin", icon: ShieldCheck },
+  // { id: "admin", label: "Admin", icon: ShieldCheck },
 ];
 
 export function RoleSelector({

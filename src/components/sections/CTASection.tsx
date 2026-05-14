@@ -1,233 +1,197 @@
 /** @format */
 "use client";
+
 import React from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Stethoscope,
   UserCheck,
   Clock,
-  Star,
+  CheckCircle2,
   ArrowRight,
-  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 
+const services = [
+  {
+    id: "bedside-nurse",
+    title: "Bedside Nursing",
+    subtitle: "Professional Home Care",
+    description:
+      "Certified nursing care at home — personalized attention, medication management, and health monitoring, when and where you need it.",
+    image: "/bedsidenursing.jpg",
+    icon: UserCheck,
+    accent: "teal",
+    features: [
+      "24/7 Availability",
+      "Certified Nurses",
+      "Home Visits",
+      "Medication Management",
+    ],
+    ctaText: "Book a Nurse",
+    href: "/dashboard/patient?tab=services",
+    price: "from UGX 70,000",
+  },
+  {
+    id: "consultation",
+    title: "Doctor Consultation",
+    subtitle: "Instant Medical Care",
+    description:
+      "Connect with licensed doctors instantly through our secure telemedicine platform for expert consultations and prescriptions.",
+    image: "/consultation.jpg",
+    icon: Stethoscope,
+    accent: "sky",
+    features: [
+      "Instant Connection",
+      "Licensed Doctors",
+      "E-Prescriptions",
+      "Follow-up Care",
+    ],
+    ctaText: "Start Consultation",
+    href: "/dashboard/patient?tab=consultations",
+    price: "from UGX 50,000",
+  },
+];
+
+const accentMap: Record<string, Record<string, string>> = {
+  teal: {
+    badge: "bg-teal-50 text-teal-700 border-teal-200",
+    icon: "bg-teal-500",
+    ring: "group-hover:ring-teal-200",
+    btn: "bg-teal-600 hover:bg-teal-700 shadow-teal-200",
+    check: "text-teal-500",
+    price: "text-teal-600",
+  },
+  sky: {
+    badge: "bg-sky-50 text-sky-700 border-sky-200",
+    icon: "bg-sky-500",
+    ring: "group-hover:ring-sky-200",
+    btn: "bg-sky-600 hover:bg-sky-700 shadow-sky-200",
+    check: "text-sky-500",
+    price: "text-sky-600",
+  },
+};
+
 const CTASection = () => {
-  const services = [
-    {
-      id: "bedside-nurse",
-      title: "Bedside Nurse",
-      subtitle: "Professional Home Care",
-      description:
-        "Get certified nursing care at home with personalized attention, medication management, and health monitoring.",
-      image: "/bedsidenursing.jpg",
-      icon: UserCheck,
-      color: "emerald",
-      features: [
-        "24/7 Availability",
-        "Certified Nurses",
-        "Home Visits",
-        "Medication Management",
-      ],
-      ctaText: "Book Nurse Visit",
-      href: "/dashboard/patient?tab=services",
-    },
-    {
-      id: "consultation",
-      title: "Doctor Consultation",
-      subtitle: "Instant Medical Care",
-      description:
-        "Connect with licensed doctors instantly through our secure telemedicine platform for consultations and prescriptions.",
-      image: "/consultation.jpg",
-      icon: Stethoscope,
-      color: "blue",
-      features: [
-        "Instant Connection",
-        "Licensed Doctors",
-        "Prescriptions",
-        "Follow-up Care",
-      ],
-      ctaText: "Start Consultation",
-      href: "/dashboard/patient?tab=consultations",
-    },
-  ];
-
   return (
-    <section className="py-24 bg-gradient-to-br from-gray-50 via-blue-50/30 to-emerald-50/30 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-100/40 to-emerald-100/40 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-indigo-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-cyan-100/25 to-blue-100/25 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] opacity-20"></div>
-
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-            <Star className="w-4 h-4" />
+    <section className="py-24 bg-white">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="text-center mb-16">
+          <span className="inline-flex items-center justify-center rounded-full border border-sky-200 bg-sky-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-sky-600 shadow-none">
             Healthcare Services
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Get Care When You
-            <span className="bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-              {" "}
-              Need It Most
-            </span>
+          </span>
+          <h2 className="mt-6 text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+            Get Care When You <span className="text-sky-600">Need It</span>
           </h2>
-          <p className="text-xl text-gray-600 leading-relaxed">
-            Access professional healthcare services from the comfort of your
-            home or get in-person care with our trusted medical professionals.
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 leading-relaxed">
+            Access professional healthcare from the comfort of your home or
+            connect with a doctor instantly — all on one secure platform.
           </p>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-          {services.map((service, index) => {
+        <div className="grid gap-7 lg:grid-cols-2 mb-14">
+          {services.map((service) => {
             const IconComponent = service.icon;
-            const colorClasses = {
-              emerald: {
-                bg: "bg-emerald-500",
-                hover: "hover:bg-emerald-600",
-                light: "bg-emerald-50",
-                text: "text-emerald-700",
-                border: "border-emerald-200",
-              },
-              blue: {
-                bg: "bg-blue-500",
-                hover: "hover:bg-blue-600",
-                light: "bg-blue-50",
-                text: "text-blue-700",
-                border: "border-blue-200",
-              },
-            }[service.color] || {
-              bg: "bg-blue-500",
-              hover: "hover:bg-blue-600",
-              light: "bg-blue-50",
-              text: "text-blue-700",
-              border: "border-blue-200",
-            };
+            const c = accentMap[service.accent];
 
             return (
-              <Card
+              <div
                 key={service.id}
-                className="group relative overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border-0 bg-white/80 backdrop-blur-sm hover:-translate-y-2"
-                style={{ animationDelay: `${index * 200}ms` }}
+                className={`group relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_24px_80px_-48px_rgba(15,23,42,0.2)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${c.ring}`}
               >
-                {/* Background Gradient */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${colorClasses.light} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                ></div>
-
-                {/* Image Section */}
-                <div className="relative h-64 w-full overflow-hidden">
+                <div className="relative h-56 w-full overflow-hidden bg-slate-100">
                   <Image
                     src={service.image}
                     alt={service.title}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/70 transition-all duration-500" />
-
-                  {/* Floating Icon */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                   <div
-                    className={`absolute top-4 right-4 w-12 h-12 ${colorClasses.bg} rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                    className={`absolute top-5 right-5 inline-flex h-12 w-12 items-center justify-center rounded-3xl ${c.icon} shadow-lg shadow-slate-900/10`}
                   >
-                    <IconComponent className="w-6 h-6 text-white" />
+                    <IconComponent className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="absolute bottom-5 left-5">
+                    <span className="inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">
+                      {service.price}
+                    </span>
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <CardContent className="p-8 relative z-10">
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-gray-800 transition-colors">
-                        {service.title}
-                      </h3>
-                      <p className="text-lg font-medium text-gray-600">
-                        {service.subtitle}
-                      </p>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-gray-600 leading-relaxed">
+                <div className="flex flex-col flex-1 gap-5 p-8">
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-widest ${c.badge}`}
+                    >
+                      {service.subtitle}
+                    </span>
+                    <h3 className="mt-4 text-2xl font-semibold text-slate-900">
+                      {service.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-slate-600">
                       {service.description}
                     </p>
-
-                    {/* Features */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        What&apos;s Included
-                      </h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {service.features.map((feature, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center gap-2 text-sm text-gray-600"
-                          >
-                            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* CTA Button */}
-                    <Button
-                      asChild
-                      className={`w-full ${colorClasses.bg} ${colorClasses.hover} text-white font-semibold py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group/btn`}
-                    >
-                      <Link
-                        href={service.href}
-                        className="flex items-center justify-center gap-2"
-                      >
-                        {service.ctaText}
-                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                      </Link>
-                    </Button>
                   </div>
-                </CardContent>
 
-                {/* Hover Effect Border */}
-                <div
-                  className={`absolute inset-0 border-2 ${colorClasses.border} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg pointer-events-none`}
-                ></div>
-              </Card>
+                  <div className="grid grid-cols-2 gap-3">
+                    {service.features.map((feature) => (
+                      <div
+                        key={feature}
+                        className="flex items-center gap-2 rounded-2xl bg-slate-50 px-3 py-2"
+                      >
+                        <CheckCircle2 className={`h-4 w-4 ${c.check}`} />
+                        <span className="text-xs text-slate-700">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button
+                    asChild
+                    className={`mt-auto inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-sm ${c.btn} transition-all duration-300 hover:-translate-y-0.5`}
+                  >
+                    <Link
+                      href={service.href}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      {service.ctaText}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto shadow-lg border border-gray-200/50">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Clock className="w-6 h-6 text-blue-500" />
-              <span className="text-lg font-semibold text-gray-900">
-                Available 24/7
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-md">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-100 text-sky-600">
+                <Clock className="h-6 w-6" />
               </span>
+              <div>
+                <p className="text-base font-semibold text-slate-900">
+                  Available 24 / 7
+                </p>
+                <p className="text-sm text-slate-600">
+                  Our healthcare professionals are always ready to help you.
+                </p>
+              </div>
             </div>
-            <p className="text-gray-600 mb-6">
-              Need immediate assistance? Our healthcare professionals are
-              available around the clock to provide the care you need.
-            </p>
             <Button
               asChild
               variant="outline"
-              size="lg"
-              className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg font-semibold transition-all duration-300"
+              className="inline-flex w-full justify-center rounded-3xl border-slate-300 bg-white/90 px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-white sm:w-auto"
             >
               <Link href="/contact" className="flex items-center gap-2">
                 Contact Support
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>

@@ -94,36 +94,42 @@ const detailedServices = [
 
 const ServicesDetailSection = () => {
   return (
-    <section id="services" className="py-12 md:py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
-            Our Services
+    <section id="services" className="py-24 bg-slate-50">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-sky-600">
+            Services
+          </p>
+          <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900">
+            Built for Modern Healthcare
           </h2>
-          <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore the comprehensive range of services we offer to advance
-            healthcare through technology, research, and innovation.
+          <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+            From telemedicine to research and innovation, our services are
+            created to help patients and providers move forward with confidence.
           </p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {detailedServices.map((service) => (
             <Card
               key={service.title}
-              className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="flex flex-col rounded-[2rem] border border-slate-200 bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <CardHeader className="pb-4">
-                <div className="flex items-center mb-2">
-                  {service.icon}
-                  <CardTitle className="text-xl font-semibold text-gray-700 ml-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-sky-100 text-sky-600">
+                    {service.icon}
+                  </div>
+                  <CardTitle className="text-xl font-semibold text-slate-900">
                     {service.title}
                   </CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="flex-grow">
-                <CardDescription className="text-gray-600 mb-4">
+                <CardDescription className="text-slate-700 mb-4 text-base">
                   {service.description}
                 </CardDescription>
-                <ul className="list-disc list-inside space-y-1 text-sm text-gray-500">
+                <ul className="list-disc list-inside space-y-2 text-sm text-slate-600">
                   {service.details.map((detail) => (
                     <li key={detail}>{detail}</li>
                   ))}

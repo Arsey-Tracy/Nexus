@@ -7,10 +7,12 @@ export interface Consultation {
   id: number;
   patient: { id: number; first_name: string; last_name: string; phone_number: string };
   doctor: { id: number; first_name: string; last_name: string } | null;
+  consultation_type?: "virtual" | "bedside";
   symptoms: string;
   notes?: string;
   status: "pending" | "approved" | "assigned" | "completed" | "cancelled";
   payment_amount?: string;
+  payment_status?: string;
   requested_at: string;
   scheduled_time?: string;
   completed_at?: string;

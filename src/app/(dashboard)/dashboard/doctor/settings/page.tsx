@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
-  // Select,
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -30,7 +30,7 @@ const DoctorSettingsPage = () => {
     messages: true,
   });
 
-  // const [specialization, setSpecialization] = useState("general-practice");
+  const [specialization, setSpecialization] = useState("general-practice");
   const [consultationHours, setConsultationHours] = useState("08:00");
   const [maxPatientsPerDay, setMaxPatientsPerDay] = useState("10");
 
@@ -73,19 +73,24 @@ const DoctorSettingsPage = () => {
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
                   Specialization
                 </label>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select your specialization" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general-practice">
-                    General Practice
-                  </SelectItem>
-                  <SelectItem value="cardiology">Cardiology</SelectItem>
-                  <SelectItem value="pediatrics">Pediatrics</SelectItem>
-                  <SelectItem value="neurology">Neurology</SelectItem>
-                  <SelectItem value="dermatology">Dermatology</SelectItem>
-                  <SelectItem value="orthopedics">Orthopedics</SelectItem>
-                </SelectContent>
+                <Select
+                  value={specialization}
+                  onValueChange={setSpecialization}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your specialization" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general-practice">
+                      General Practice
+                    </SelectItem>
+                    <SelectItem value="cardiology">Cardiology</SelectItem>
+                    <SelectItem value="pediatrics">Pediatrics</SelectItem>
+                    <SelectItem value="neurology">Neurology</SelectItem>
+                    <SelectItem value="dermatology">Dermatology</SelectItem>
+                    <SelectItem value="orthopedics">Orthopedics</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>

@@ -1,19 +1,12 @@
 /** @format */
 
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 
 import ClientProviders from "./providers/ClientProviders";
 import "./globals.css";
 
-const geist = Geist({
-  subsets: ["latin"],
-  display: "swap",
-  adjustFontFallback: true,
-});
-
 export const metadata: Metadata = {
-  title: "NexusCare",
+  title: "Nexus Care Uganda",
   description: "Your health, wherever you are",
 };
 
@@ -23,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={geist.className}>
-      <body>
+    <html lang="en">
+      <body suppressHydrationWarning>
         {/* wrap app in client providers (AuthProvider runs only on client) */}
         <ClientProviders>
           {/* <Navbar /> */}

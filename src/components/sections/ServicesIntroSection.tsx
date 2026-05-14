@@ -30,25 +30,35 @@ const services = [
 
 const ServicesIntroSection = () => {
   return (
-    <section className="py-16 bg-gray-50 animate-fade-in">
-      <div className="container mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-          Our Core Pillars
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
+    <section className="py-24 bg-white text-slate-900">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-sky-600">
+            Our Services
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-center mt-4 text-slate-900">
+            Core Pillars of Care
+          </h2>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+            Comprehensive healthcare solutions built on trust and innovation
+          </p>
+        </div>
+        <div className="grid gap-8 md:grid-cols-3">
           {services.map((service) => (
             <Card
               key={service.title}
-              className="text-center shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 bg-white border-0"
+              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white text-center shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <CardHeader>
-                <div className="flex justify-center">{service.icon}</div>
-                <CardTitle className="text-2xl font-semibold text-gray-700">
+                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-sky-100 text-sky-600 shadow-none">
+                  {service.icon}
+                </div>
+                <CardTitle className="text-2xl font-semibold text-slate-900">
                   {service.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">{service.description}</p>
+                <p className="text-slate-600">{service.description}</p>
               </CardContent>
             </Card>
           ))}

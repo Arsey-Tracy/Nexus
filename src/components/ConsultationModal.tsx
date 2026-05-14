@@ -1,10 +1,22 @@
 /** @format */
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { X, Video, Calendar, Clock } from "lucide-react";
+import {
+  X,
+  Video,
+  Calendar,
+  Clock,
+  AlertCircle,
+  CheckCircle2,
+  ChevronRight,
+  ChevronLeft,
+  Shield,
+  Loader2,
+} from "lucide-react";
 import { requestConsultation } from "@/lib/api/consultations";
 
 function ConsultationModal({
@@ -23,8 +35,8 @@ function ConsultationModal({
   const [error, setError] = useState<string | null>(null);
 
   const handleContinueToPayment = () => {
-    if (!symptoms) {
-      setError("Please describe your symptoms.");
+    if (!symptoms.trim()) {
+      setError("Please describe your symptoms before continuing.");
       return;
     }
     setError(null);
@@ -40,39 +52,29 @@ function ConsultationModal({
         Type: Virtual Consultation
         ${preferredDate ? `Preferred Date: ${preferredDate}` : ""}
         ${preferredTime ? `Preferred Time: ${preferredTime}` : ""}
-          `.trim();
+      `.trim();
+
       const response = await requestConsultation(
         symptoms,
         consultationNotes,
-        "virtual"
+        "virtual",
       );
-      console.log("Consultation request response:", response);
-      // Handle both response types:
-      // 1. Direct Consultation object
-      // 2. ConsultationRequestResponse with consultation + payment_link
+
       if (response) {
-        // If there's a payment_link, redirect to payment
         if (response.payment_link) {
           window.location.href = response.payment_link;
         } else {
-          // Otherwise, show success and refresh
           alert(
-            "Consultation request submitted successfully! You will be contacted shortly."
+            "Consultation request submitted successfully! You will be contacted shortly.",
           );
           onSuccess();
         }
       }
     } catch (_err: unknown) {
-      // FIX: Changed 'any' to 'unknown'
-      // log for diagnostics
       console.error("Consultation submission error:", _err);
-
-      // Extract detailed error message from backend validation errors
       let errorMessage = "Failed to submit request. Please try again.";
-      // Use type assertion to safely access expected properties for error handling
       const err = _err as { data?: unknown };
       if (err?.data) {
-        // Handle Django REST Framework validation errors
         if (typeof err.data === "object") {
           const errors: string[] = [];
           Object.entries(err.data).forEach(
@@ -82,11 +84,9 @@ function ConsultationModal({
               } else if (typeof messages === "string") {
                 errors.push(`${field}: ${messages}`);
               }
-            }
+            },
           );
-          if (errors.length > 0) {
-            errorMessage = errors.join("\n");
-          }
+          if (errors.length > 0) errorMessage = errors.join("\n");
         } else if (typeof err.data === "string") {
           errorMessage = err.data;
         }
@@ -107,120 +107,151 @@ function ConsultationModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-semibold text-white">
-              Book Virtual Consultation
-            </h2>
-            <p className="text-blue-100 text-sm mt-1">
-              Connect with a doctor via secure video call
-            </p>
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{
+        backgroundColor: "rgba(15, 23, 42, 0.5)",
+        backdropFilter: "blur(4px)",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.97 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[95vh] sm:max-h-[90vh]"
+      >
+        {/* ── Header ── */}
+        <div className="relative flex items-center justify-between px-6 pt-6 pb-5 shrink-0">
+          {/* Drag handle (mobile) */}
+          <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-slate-200 sm:hidden" />
+
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
+              <Video className="h-5 w-5 text-blue-600" />
+            </span>
+            <div>
+              <h2 className="text-[17px] font-semibold text-slate-900 leading-tight">
+                Virtual Consultation
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Secure video call with a doctor
+              </p>
+            </div>
           </div>
-          <Button
+
+          <button
             type="button"
             onClick={() => {
               resetForm();
               onClose();
             }}
-            className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
-            aria-label="Close modal"
+            aria-label="Close"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
           >
-            <X className="w-5 h-5" />
-          </Button>
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 md:p-8">
-            {/* Step Indicator */}
-            <div className="flex items-center justify-center mb-10">
-              <div className="flex items-center w-full max-w-md">
-                {/* Step 1 */}
-                <div className="flex flex-col items-center flex-1">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                      step >= 1
-                        ? "bg-blue-600 text-white shadow-md"
-                        : "bg-gray-200 text-gray-500"
-                    }`}
-                  >
-                    {step > 1 ? "✓" : "1"}
-                  </div>
-                  <span className="text-xs mt-2 text-gray-600 font-medium">
-                    Details
-                  </span>
-                </div>
-
-                {/* Connector */}
-                <div
-                  className={`h-1 flex-1 mx-2 rounded transition-all ${
-                    step >= 2 ? "bg-blue-600" : "bg-gray-200"
-                  }`}
-                />
-
-                {/* Step 2 */}
-                <div className="flex flex-col items-center flex-1">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                      step >= 2
-                        ? "bg-blue-600 text-white shadow-md"
-                        : "bg-gray-200 text-gray-500"
-                    }`}
-                  >
-                    2
-                  </div>
-                  <span className="text-xs mt-2 text-gray-600 font-medium">
-                    Payment
-                  </span>
-                </div>
-              </div>
+        {/* ── Step Indicator ── */}
+        <div className="px-6 pb-5 shrink-0">
+          <div className="flex items-center gap-2">
+            {/* Step 1 */}
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                  step >= 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                {step > 1 ? <CheckCircle2 className="h-3.5 w-3.5" /> : "1"}
+              </span>
+              <span
+                className={`text-xs font-medium ${step >= 1 ? "text-slate-700" : "text-slate-400"}`}
+              >
+                Your Details
+              </span>
             </div>
 
-            {/* Step 1: Details */}
-            {step === 1 && (
-              <div className="space-y-6">
-                {/* Service Type Badge */}
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
-                  <div className="flex items-center gap-3">
-                    <Video className="w-5 h-5 text-blue-600" />
-                    <span className="font-semibold text-gray-800">
-                      Virtual Consultation
-                    </span>
-                  </div>
-                </div>
+            {/* Connector */}
+            <div className="flex-1 h-px bg-slate-100 mx-1 relative overflow-hidden rounded-full">
+              <motion.div
+                className="absolute inset-y-0 left-0 bg-blue-500 rounded-full"
+                initial={{ width: "0%" }}
+                animate={{ width: step >= 2 ? "100%" : "0%" }}
+                transition={{ duration: 0.35 }}
+              />
+            </div>
 
-                {/* Symptoms Field */}
-                <div>
+            {/* Step 2 */}
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                  step >= 2
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                2
+              </span>
+              <span
+                className={`text-xs font-medium ${step >= 2 ? "text-slate-700" : "text-slate-400"}`}
+              >
+                Review & Pay
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-slate-100 shrink-0" />
+
+        {/* ── Body ── */}
+        <div className="flex-1 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -16 }}
+                transition={{ duration: 0.2 }}
+                className="px-6 py-5 space-y-5"
+              >
+                {/* Symptoms */}
+                <div className="space-y-1.5">
                   <label
                     htmlFor="symptoms"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
+                    className="block text-sm font-medium text-slate-700"
                   >
                     What symptoms are you experiencing?{" "}
-                    <span className="text-red-500">*</span>
+                    <span className="text-rose-500">*</span>
                   </label>
                   <Textarea
                     id="symptoms"
                     value={symptoms}
-                    onChange={(e) => setSymptoms(e.target.value)}
-                    placeholder="Please describe your symptoms in detail (e.g., persistent headache, fever for 3 days, difficulty breathing)"
+                    onChange={(e) => {
+                      setSymptoms(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    placeholder="e.g. persistent headache, fever for 3 days, difficulty breathing…"
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full resize-none rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Be as specific as possible to help the doctor prepare
+                  <p className="text-xs text-slate-400">
+                    Be specific — it helps the doctor prepare before your call.
                   </p>
                 </div>
 
-                {/* Date and Time */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                {/* Date + Time */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
                     <label
                       htmlFor="preferredDate"
-                      className="block text-sm font-semibold text-gray-700 mb-2"
+                      className="flex items-center gap-1.5 text-sm font-medium text-slate-700"
                     >
-                      <Calendar className="w-4 h-4 inline mr-1" />
+                      <Calendar className="h-3.5 w-3.5 text-slate-400" />
                       Preferred Date
                     </label>
                     <Input
@@ -229,15 +260,15 @@ function ConsultationModal({
                       value={preferredDate}
                       onChange={(e) => setPreferredDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="rounded-xl border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all"
                     />
                   </div>
-                  <div>
+                  <div className="space-y-1.5">
                     <label
                       htmlFor="preferredTime"
-                      className="block text-sm font-semibold text-gray-700 mb-2"
+                      className="flex items-center gap-1.5 text-sm font-medium text-slate-700"
                     >
-                      <Clock className="w-4 h-4 inline mr-1" />
+                      <Clock className="h-3.5 w-3.5 text-slate-400" />
                       Preferred Time
                     </label>
                     <Input
@@ -245,19 +276,19 @@ function ConsultationModal({
                       id="preferredTime"
                       value={preferredTime}
                       onChange={(e) => setPreferredTime(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="rounded-xl border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Additional Notes */}
-                <div>
+                <div className="space-y-1.5">
                   <label
                     htmlFor="notes"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
+                    className="block text-sm font-medium text-slate-700"
                   >
-                    Additional Information{" "}
-                    <span className="text-gray-400 font-normal">
+                    Additional information{" "}
+                    <span className="text-slate-400 font-normal">
                       (optional)
                     </span>
                   </label>
@@ -265,213 +296,183 @@ function ConsultationModal({
                     id="notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Any allergies, current medications, or other relevant medical history"
+                    placeholder="Allergies, current medications, or relevant medical history…"
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full resize-none rounded-xl border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all"
                   />
                 </div>
 
-                {/* Error Message */}
+                {/* Error */}
                 {error && (
-                  <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-red-500"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <p className="text-sm text-red-700 font-medium">
-                        {error}
+                  <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 16 }}
+                transition={{ duration: 0.2 }}
+                className="px-6 py-5 space-y-4"
+              >
+                <p className="text-sm text-slate-500">
+                  Review your details below before completing payment.
+                </p>
+
+                {/* Summary card */}
+                <div className="rounded-xl border border-slate-100 bg-slate-50 divide-y divide-slate-100 overflow-hidden">
+                  {/* Service */}
+                  <div className="flex items-center gap-3 px-4 py-3.5">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100">
+                      <Video className="h-4 w-4 text-blue-600" />
+                    </span>
+                    <div>
+                      <p className="text-xs text-slate-400">Service</p>
+                      <p className="text-sm font-semibold text-slate-800">
+                        Virtual Consultation
                       </p>
                     </div>
                   </div>
-                )}
 
-                {/* Action Buttons */}
-                <div className="flex justify-end pt-4 gap-3">
-                  <Button
-                    type="button"
-                    onClick={handleContinueToPayment}
-                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md hover:shadow-lg"
-                  >
-                    Continue to Payment →
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2: Payment */}
-            {step === 2 && (
-              <div className="space-y-6">
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                    Review & Confirm
-                  </h3>
-                  <p className="text-gray-600">
-                    Please verify your consultation details
-                  </p>
-                </div>
-
-                {/* Summary Card */}
-                <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-xl border-2 border-gray-200 space-y-4">
-                  <div className="flex items-start justify-between pb-4 border-b border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <Video className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 font-medium">
-                          Service Type
-                        </p>
-                        <p className="font-semibold text-gray-800">
-                          Virtual Consultation
-                        </p>
-                      </div>
-                    </div>
+                  {/* Symptoms summary */}
+                  <div className="px-4 py-3.5">
+                    <p className="text-xs text-slate-400 mb-1">Symptoms</p>
+                    <p className="text-sm text-slate-700 leading-relaxed line-clamp-3">
+                      {symptoms}
+                    </p>
                   </div>
 
-                  {preferredDate && preferredTime && (
-                    <div className="flex items-start gap-3 pb-4 border-b border-gray-200">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <Calendar className="w-5 h-5 text-blue-600" />
-                      </div>
+                  {/* Schedule */}
+                  {(preferredDate || preferredTime) && (
+                    <div className="flex items-center gap-3 px-4 py-3.5">
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100">
+                        <Calendar className="h-4 w-4 text-sky-600" />
+                      </span>
                       <div>
-                        <p className="text-sm text-gray-600 font-medium">
-                          Scheduled For
+                        <p className="text-xs text-slate-400">
+                          Preferred Schedule
                         </p>
-                        <p className="font-semibold text-gray-800">
-                          {new Date(preferredDate).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                        <p className="text-sm font-semibold text-slate-800">
+                          {preferredDate
+                            ? new Date(preferredDate).toLocaleDateString(
+                                "en-UG",
+                                {
+                                  weekday: "long",
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                },
+                              )
+                            : "—"}
+                          {preferredTime && (
+                            <span className="font-normal text-slate-500">
+                              {" "}
+                              · {preferredTime}
+                            </span>
+                          )}
                         </p>
-                        <p className="text-sm text-gray-600">{preferredTime}</p>
                       </div>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-4 bg-blue-50 -mx-6 px-6 py-4 rounded-b-xl">
+                  {/* Amount */}
+                  <div className="flex items-center justify-between px-4 py-4 bg-blue-600">
                     <div>
-                      <p className="text-sm text-gray-600 font-medium">
-                        Total Amount
-                      </p>
-                      <p className="text-3xl font-bold text-blue-600">
+                      <p className="text-xs text-blue-200">Total amount</p>
+                      <p className="text-2xl font-bold text-white tracking-tight">
                         UGX 50,000
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">Secure payment</p>
-                      <div className="flex gap-1 mt-1">
-                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
-                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
-                        <div className="w-6 h-4 bg-gray-300 rounded"></div>
-                      </div>
+                    <div className="flex items-center gap-1.5 text-blue-200">
+                      <Shield className="h-3.5 w-3.5" />
+                      <span className="text-xs">Secure payment</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Payment Info */}
-                <div className="p-4 bg-green-50 rounded-lg border border-green-100">
-                  <div className="flex items-start gap-3">
-                    <svg
-                      className="w-5 h-5 text-green-600 mt-0.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <div>
-                      <p className="text-sm font-semibold text-green-800">
-                        Secure Payment Processing
-                      </p>
-                      <p className="text-xs text-green-700 mt-1">
-                        Your payment information is encrypted and protected
-                      </p>
-                    </div>
-                  </div>
+                {/* Trust note */}
+                <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <p className="text-xs text-emerald-700 leading-relaxed">
+                    Your payment and personal information are encrypted and
+                    securely processed.
+                  </p>
                 </div>
 
-                {/* Error Message */}
+                {/* Error */}
                 {error && (
-                  <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-red-500"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <p className="text-sm text-red-700 font-medium">
-                        {error}
-                      </p>
-                    </div>
+                  <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{error}</span>
                   </div>
                 )}
-
-                {/* Action Buttons */}
-                <div className="flex justify-between pt-4 gap-3">
-                  <Button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
-                  >
-                    Back
-                  </Button>
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <span className="flex items-center gap-2">
-                        <svg
-                          className="animate-spin h-5 w-5"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            fill="none"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          />
-                        </svg>
-                        Processing...
-                      </span>
-                    ) : (
-                      "Confirm & Pay"
-                    )}
-                  </Button>
-                </div>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
         </div>
-      </div>
+
+        {/* ── Footer Actions ── */}
+        <div className="shrink-0 border-t border-slate-100 px-6 py-4 flex items-center justify-between gap-3">
+          {step === 1 ? (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  resetForm();
+                  onClose();
+                }}
+                className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <Button
+                type="button"
+                onClick={handleContinueToPayment}
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 shadow-sm shadow-blue-200"
+              >
+                Continue
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setStep(1)}
+                className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 gap-1.5"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading}
+                className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 shadow-sm shadow-blue-200 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Processing…
+                  </>
+                ) : (
+                  <>
+                    Confirm & Pay
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }

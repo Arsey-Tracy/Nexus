@@ -1,11 +1,11 @@
 /** @format */
-
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Stethoscope, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -19,122 +19,149 @@ import {
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/services", label: "Services" },
-  // { to: "/projects", label: "Projects" },
   { to: "/about", label: "About Us" },
   { to: "/contact", label: "Contact" },
-  // { to: "/signin", label: "Sign In" },
-  // { to: "/register", label: "Register" },
 ];
 
 const Navbar = () => {
   const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="bg-white shadow sticky top-0 z-50">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "bg-white/95 backdrop-blur-xl shadow-sm shadow-slate-300/10 border-b border-slate-200/70" : "bg-white"}`}
+    >
       <nav
-        className="container mx-auto px-6 py-3 flex justify-between items-center max-w-7xl"
+        className="container mx-auto flex h-20 items-center justify-between px-6 max-w-7xl"
         aria-label="Main navigation"
       >
         <Link
           href="/"
-          className="text-2xl font-bold text-sky-600 hover:text-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded"
+          className="flex items-center gap-3 focus:outline-none"
           aria-label="NexusCare Home"
         >
-          <span className="flex items-center">
-            <Stethoscope className="h-8 w-8 mr-2" />
-            NexusCare
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-100 shadow-none transition-transform duration-150 hover:scale-105">
+            <Image
+              width={30}
+              height={30}
+              src="/nexuscareuglogo.svg"
+              alt="Nexus Care Uganda Logo"
+              className="object-cover"
+            />
+          </div>
+          <span className="text-lg font-semibold text-blue-600 transition-colors duration-150 hover:text-sky-700">
+            Nexus Care
+            <span className="ml-0.5 text-[10px] font-medium text-slate-400 uppercase tracking-[0.25em]">
+              UG
+            </span>
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-3 sm:space-x-6 items-center">
+        <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               href={link.to}
-              className={`px-3 py-1 rounded-md transition-colors duration-200 ${
-                pathname === link.to
-                  ? "bg-sky-100 text-sky-700 font-semibold"
-                  : "text-gray-700 hover:text-sky-600 hover:bg-sky-50"
-              }`}
               aria-current={pathname === link.to ? "page" : undefined}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition duration-150 ${pathname === link.to ? "bg-sky-50 text-sky-600 shadow-sm shadow-sky-200/50" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}
             >
               {link.label}
             </Link>
           ))}
+        </div>
 
-          {/* Add Auth buttons separately */}
-          <Button asChild variant="outline" className="px-4 py-2">
+        <div className="hidden items-center gap-3 md:flex">
+          <Button
+            asChild
+            variant="ghost"
+            className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          >
             <Link href="/signin">Sign In</Link>
           </Button>
           <Button
             asChild
-            className="px-4 py-2 bg-sky-600 text-white hover:bg-sky-700"
+            className="rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-sky-200/20 hover:bg-sky-700"
           >
-            <Link href="/register">Register</Link>
+            <Link href="/register">Get Started</Link>
           </Button>
         </div>
 
-        {/* Mobile Navigation - Drawer */}
         <div className="md:hidden">
           <Drawer>
             <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
-                <Menu className="h-6 w-6" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-lg text-slate-600 hover:bg-slate-100"
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
               </Button>
             </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader className="flex justify-between items-center p-4 border-b">
-                <DrawerTitle className="text-xl font-semibold text-sky-700">
-                  Menu
+            <DrawerContent className="rounded-t-3xl bg-white">
+              <DrawerHeader className="flex items-center justify-between border-b border-slate-100 px-5 pb-3 pt-5">
+                <DrawerTitle className="flex items-center gap-2 text-base font-semibold text-blue-900">
+                  <span className="inline-flex h-15 w-15 items-center justify-center rounded-2xl bg-white-600 shadow-lg shadow-sky-500/20">
+                    <Image
+                      width={30}
+                      height={30}
+                      src="/nexuscareuglogo.svg"
+                      alt=""
+                      className="object-cover"
+                    />
+                  </span>
+                  NexusCare<span className="text-sky-600">UG</span>
                 </DrawerTitle>
                 <DrawerClose asChild>
-                  <Button variant="ghost" size="icon" aria-label="Close menu">
-                    <X className="h-6 w-6" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full h-9 w-9 text-slate-400"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-4 w-4" />
                   </Button>
                 </DrawerClose>
               </DrawerHeader>
-              <div className="p-4">
-                <ul className="space-y-3">
-                  {navLinks.map((link) => (
-                    <li key={link.to}>
-                      <DrawerClose asChild>
-                        <Link
-                          href={link.to}
-                          className={`block py-2 px-3 text-lg rounded-md transition-colors ${
-                            pathname === link.to
-                              ? "bg-sky-100 text-sky-700 font-semibold"
-                              : "text-gray-700 hover:text-sky-600 hover:bg-sky-50"
-                          }`}
-                          aria-current={
-                            pathname === link.to ? "page" : undefined
-                          }
-                        >
-                          {link.label}
-                        </Link>
-                      </DrawerClose>
-                    </li>
-                  ))}
 
-                  {/* Add mobile auth buttons (full width for better tap targets) */}
-                  <li className="pt-2">
-                    <DrawerClose asChild>
-                      <Button asChild variant="outline" className="w-full mb-2">
-                        <Link href="/signin">Sign In</Link>
-                      </Button>
-                    </DrawerClose>
-                  </li>
-                  <li>
-                    <DrawerClose asChild>
-                      <Button
-                        asChild
-                        className="w-full bg-sky-600 text-white hover:bg-sky-700"
-                      >
-                        <Link href="/register">Register</Link>
-                      </Button>
-                    </DrawerClose>
-                  </li>
-                </ul>
+              <div className="space-y-2 px-4 py-4">
+                {navLinks.map((link) => (
+                  <DrawerClose key={link.to} asChild>
+                    <Link
+                      href={link.to}
+                      aria-current={pathname === link.to ? "page" : undefined}
+                      className={`block rounded-2xl px-4 py-3 text-sm font-medium transition ${pathname === link.to ? "bg-sky-50 text-sky-700" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"}`}
+                    >
+                      {link.label}
+                    </Link>
+                  </DrawerClose>
+                ))}
+              </div>
+
+              <div className="border-t border-slate-100 px-4 pb-8 pt-4 space-y-3">
+                <DrawerClose asChild>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full rounded-2xl border-slate-200 text-slate-700 font-medium"
+                  >
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                </DrawerClose>
+                <DrawerClose asChild>
+                  <Button
+                    asChild
+                    className="w-full rounded-2xl bg-sky-600 font-semibold text-white hover:bg-sky-700"
+                  >
+                    <Link href="/register">Get Started</Link>
+                  </Button>
+                </DrawerClose>
               </div>
             </DrawerContent>
           </Drawer>

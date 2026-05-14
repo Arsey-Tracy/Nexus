@@ -36,7 +36,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 bg-white border-0 relative">
+    <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 bg-[#0f172a] border border-[#0891B2]/10 relative">
       <CardHeader className="p-0 relative">
         <Image
           src={imageUrl}
@@ -45,21 +45,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           height={192}
           className="w-full h-48 object-cover"
         />
-        <div className="absolute top-2 right-2 bg-white/80 rounded-full p-1 shadow">
-          <Heart className="h-5 w-5 text-sky-600" />
+        <div className="absolute top-2 right-2 bg-[#07101f]/90 rounded-full p-1 shadow-lg shadow-[#0891B2]/20">
+          <Heart className="h-5 w-5 text-[#38bdf8]" />
         </div>
       </CardHeader>
       <CardContent className="p-6 flex flex-col flex-grow">
-        <CardTitle className="mb-2 text-xl font-semibold text-sky-700">
+        <CardTitle className="mb-2 text-xl font-semibold text-white">
           {title}
         </CardTitle>
-        <CardDescription className="text-gray-600 leading-relaxed mb-4 flex-grow">
+        <CardDescription className="text-slate-300 leading-relaxed mb-4 flex-grow">
           {description}
         </CardDescription>
         <CardFooter className="p-0 mt-auto">
           <Button
             onClick={handleDonateClick}
-            className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow cursor-pointer"
+            className="w-full bg-[#0891B2] hover:bg-[#0d7e9c] text-white font-semibold shadow cursor-pointer"
           >
             Donate Now
           </Button>

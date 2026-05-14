@@ -11,6 +11,8 @@ type User = {
   last_name?: string;
   email?: string;
   user_type?: string;
+  profile_pic?: string | null;
+  profile_picture_url?: string | null;
   [key: string]: unknown;
 } | null;
 
@@ -20,6 +22,7 @@ type AuthContextType = {
   loading: boolean;
   login: (user: User, token: string) => void;
   logout: () => void;
+  updateUser: (user: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -87,6 +90,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch {}
   };
 
+  const updateUser = (userObj: User) => {
+    setUser(userObj);
+    try {
+      localStorage.setItem("user", JSON.stringify(userObj));
+    } catch {}
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -100,7 +110,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, loading, login, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

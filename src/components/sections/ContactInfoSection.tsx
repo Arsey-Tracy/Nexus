@@ -1,4 +1,4 @@
-/** @format */
+﻿/** @format */
 "use client";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,99 +6,112 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 const ContactInfoSection = () => {
   return (
-    <section id="contact" className="py-12 md:py-16 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
-            Get In Touch
+    <section
+      id="contact"
+      className="py-24 bg-gradient-to-br from-slate-50 to-white text-slate-900"
+    >
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="mb-16 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sky-600">
+            Contact Us
+          </p>
+          <h2 className="mt-4 text-4xl md:text-5xl font-bold text-slate-900">
+            Reach the Nexus Care Team
           </h2>
-          <p className="mt-3 text-lg text-gray-600">
-            We&apos;d love to hear from you. Reach out through any of the
-            channels below.
+          <p className="mx-auto mt-4 max-w-2xl text-lg leading-7 text-slate-600">
+            Get fast and friendly support for bookings, consultations, or
+            general inquiries from our dedicated team.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+
+        <div className="grid gap-8 md:grid-cols-3">
+          <Card className="rounded-[1.75rem] border border-slate-800/70 bg-white/5 text-center shadow-xl shadow-slate-950/20 transition-transform duration-300 hover:-translate-y-1 hover:bg-white/10">
             <CardHeader>
-              <div className="flex justify-center mb-3">
-                <Mail className="h-10 w-10 text-sky-600" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-sky-100 text-sky-600 shadow-none">
+                <Mail className="h-7 w-7" />
               </div>
-              <CardTitle className="text-xl font-semibold text-gray-700">
+              <CardTitle className="text-xl font-semibold text-slate-900">
                 Email Us
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
-                General Inquiries:{" "}
+              <p className="text-sm text-slate-600">
+                General inquiries:{" "}
                 <a
-                  href="mailto:nexuscare@gmail.com"
-                  className="text-sky-600 hover:underline"
+                  href="mailto:info@nexuscare.hub"
+                  className="font-semibold text-sky-600 hover:text-sky-700"
                 >
                   info@nexuscare.hub
                 </a>
               </p>
-              <p className="text-gray-600">
+              <p className="mt-3 text-sm text-slate-600">
                 Support:{" "}
                 <a
                   href="mailto:support@nexuscare.hub"
-                  className="text-sky-600 hover:underline"
+                  className="font-semibold text-sky-600 hover:text-sky-700"
                 >
-                  support@nexcare.hub
+                  support@nexuscare.hub
                 </a>
               </p>
             </CardContent>
           </Card>
-          <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+
+          <Card className="rounded-[1.75rem] border border-slate-800/70 bg-white/5 text-center shadow-xl shadow-slate-950/20 transition-transform duration-300 hover:-translate-y-1 hover:bg-white/10">
             <CardHeader>
-              <div className="flex justify-center mb-3">
-                <Phone className="h-10 w-10 text-emerald-600" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-600 shadow-none">
+                <Phone className="h-7 w-7" />
               </div>
-              <CardTitle className="text-xl font-semibold text-gray-700">
+              <CardTitle className="text-xl font-semibold text-slate-900">
                 Call Us
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">
+              <p className="text-sm text-slate-600">
                 Office:{" "}
                 <a
                   href="tel:+256742879650"
-                  className="text-emerald-600 hover:underline"
+                  className="font-semibold text-emerald-600 hover:text-emerald-700"
                 >
                   +256742879650
                 </a>
               </p>
-              <p className="text-gray-600">
-                Whatsapp:{" "}
+              <p className="mt-3 text-sm text-slate-600">
+                WhatsApp:{" "}
                 <a
                   href="tel:+256779541272"
-                  className="text-emerald-600 hover:underline"
+                  className="font-semibold text-emerald-600 hover:text-emerald-700"
                 >
                   +256779541272
                 </a>
               </p>
-              <p className="text-gray-600">
-                Support Line:{" "}
+              <p className="mt-3 text-sm text-slate-600">
+                Support:{" "}
                 <a
                   href="tel:+256707758612"
-                  className="text-emerald-600 hover:underline"
+                  className="font-semibold text-emerald-600 hover:text-emerald-700"
                 >
                   +256707758612
                 </a>
               </p>
             </CardContent>
           </Card>
-          <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
+
+          <Card className="rounded-[1.75rem] border border-slate-800/70 bg-white/5 text-center shadow-xl shadow-slate-950/20 transition-transform duration-300 hover:-translate-y-1 hover:bg-white/10">
             <CardHeader>
-              <div className="flex justify-center mb-3">
-                <MapPin className="h-10 w-10 text-amber-500" />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-amber-100 text-amber-600 shadow-none">
+                <MapPin className="h-7 w-7" />
               </div>
-              <CardTitle className="text-xl font-semibold text-gray-700">
+              <CardTitle className="text-xl font-semibold text-slate-900">
                 Our Office
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">NexusCare, </p>
-              <p className="text-gray-600">Nansana, Wakiso, Uganda</p>
+              <p className="text-sm font-semibold text-slate-900">
+                Nexus Care Uganda
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Nansana, Wakiso, Uganda
+              </p>
             </CardContent>
           </Card>
         </div>

@@ -7,67 +7,76 @@ import { Users, Info } from "lucide-react";
 
 const AboutUsContentSection = () => {
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-sky-700 mb-4">
+    <section className="py-24 bg-slate-50 text-slate-900">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold uppercase tracking-[0.32em] text-sky-600">
             About Nexus Care
+          </p>
+          <h1 className="mt-4 text-5xl font-bold text-slate-900 md:text-6xl">
+            Pioneering Healthcare for the Next Generation
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Pioneering the future of healthcare through innovative technology
-            and collaborative research.
+          <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-slate-600">
+            We combine telemedicine, research, and innovation to deliver care
+            that is secure, accessible, and grounded in trust.
           </p>
         </div>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <Image
-            src="/placeholder.svg" // Replace with an actual image if available via upload
-            alt="Our Team"
-            width={600}
-            height={384}
-            className="rounded-lg shadow-lg object-cover w-full h-auto max-h-96"
-            style={{ width: "100%", height: "auto", maxHeight: "24rem" }}
-            priority
-          />
+
+        <div className="grid gap-8 md:grid-cols-2 items-center">
+          <div className="overflow-hidden rounded-[2rem] bg-slate-200 shadow-lg">
+            <Image
+              src="/consultation.jpg"
+              alt="Our Team and Healthcare Professionals"
+              width={700}
+              height={500}
+              className="h-full w-full object-cover"
+              priority
+            />
+          </div>
+
           <div className="space-y-6">
-            <Card>
+            <Card className="rounded-[2rem] border border-slate-200 bg-white shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center text-sky-600">
                   <Users className="h-6 w-6 mr-2" /> Our Mission
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700">
+                <p className="text-slate-700 leading-7">
                   Our mission is to foster innovation in healthcare by
                   connecting bright minds, funding groundbreaking projects, and
-                  providing essential services to accelerate medical
-                  advancements. We believe in a collaborative approach to solve
-                  complex health challenges.
+                  providing essential services that accelerate medical progress.
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="rounded-[2rem] border border-slate-200 bg-white shadow-md">
               <CardHeader>
-                <CardTitle className="flex items-center text-sky-600">
+                <CardTitle className="flex items-center text-emerald-600">
                   <Info className="h-6 w-6 mr-2" /> Our Vision
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700">
-                  We envision a world where innovative healthcare solutions are
-                  accessible to all, leading to improved patient outcomes and a
-                  healthier global community. NexusCare strives to be at the
-                  forefront of this transformation.
+                <p className="text-slate-700 leading-7">
+                  We envision a world where healthcare innovation is accessible
+                  to everyone, empowering better outcomes and stronger
+                  communities across Uganda and beyond.
                 </p>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <h2 className="text-2xl font-semibold text-sky-700 mb-4 text-center">
-            Our Values
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+        <div className="mt-16 rounded-[2rem] border border-slate-200 bg-white p-10 shadow-md">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+              Our Values
+            </h2>
+            <p className="mt-3 text-base text-slate-600">
+              The principles guiding every patient interaction, research
+              project, and technology decision.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 title: "Innovation",
@@ -86,11 +95,16 @@ const AboutUsContentSection = () => {
                 description: "Making a tangible difference in healthcare.",
               },
             ].map((value) => (
-              <div key={value.title} className="p-4 bg-white rounded-lg shadow">
-                <h3 className="font-semibold text-sky-600 mb-1">
+              <div
+                key={value.title}
+                className="rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 to-blue-50 p-6"
+              >
+                <h3 className="mb-2 text-lg font-semibold text-sky-700">
                   {value.title}
                 </h3>
-                <p className="text-sm text-gray-600">{value.description}</p>
+                <p className="text-sm leading-6 text-slate-700">
+                  {value.description}
+                </p>
               </div>
             ))}
           </div>
