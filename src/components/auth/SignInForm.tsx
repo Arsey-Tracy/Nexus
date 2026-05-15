@@ -88,7 +88,7 @@ export function SignInForm() {
           if (typeof parsed === "object" && parsed !== null) {
             const messages = Object.entries(parsed)
               .map(([k, v]) =>
-                Array.isArray(v) ? `${k}: ${v.join(", ")}` : `${k}: ${v}`
+                Array.isArray(v) ? `${k}: ${v.join(", ")}` : `${k}: ${v}`,
               )
               .join(" | ");
             setError(messages);

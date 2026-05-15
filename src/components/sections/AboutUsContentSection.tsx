@@ -7,7 +7,7 @@ import { Users, Info } from "lucide-react";
 
 const AboutUsContentSection = () => {
   return (
-    <section className="py-24 bg-slate-50 text-slate-900">
+    <section className="py-24 bg-blue-50 text-slate-900">
       <div className="container mx-auto max-w-6xl px-6">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-[0.32em] text-sky-600">

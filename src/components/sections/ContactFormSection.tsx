@@ -18,68 +18,21 @@ import {
 import { Send } from "lucide-react";
 import { sendContactForm } from "@/lib/api/contact";
 import { ContactFormData, contactSchema } from "@/lib/schemas/contact.schema";
-// import { toast } from "sonner";
-// import { log } from "console";
 
-// const contactFormSchema = z.object({
-//   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-//   email: z.string().email({ message: "Invalid email address." }),
-//   subject: z
-//     .string()
-//     .min(5, { message: "Subject must be at least 5 characters." }),
-//   message: z
-//     .string()
-//     .min(10, { message: "Message must be at least 10 characters." }),
-// });
-
-// type ContactFormValues = z.infer<typeof contactFormSchema>;
 const ContactFormSection = () => {
-  // const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   reset,
-  //   formState: { errors },
-  // } = useForm<ContactFormData>({
-  //   resolver: ZodResolver(contactSchema),
-  // });
-  // const form = useForm<ContactFormValues>({
-  //   resolver: zodResolver(contactFormSchema),
-  //   defaultValues: {
-  //     name: "",
-  //     email: "",
-  //     subject: "",
-  //     message: "",
-  //   },
-  // });
+
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   });
 
-  // const onSubmit = (data: ContactFormValues) => {
-  //   const response = await sendContactForm;
-  //   console.log("Contact form submitted:", data);
-  //   // Here you would typically send the data to a backend or email service
-  //   // toast({
-  //   //   title: "Message Sent!",
-  //   //   description:
-  //   //     "Thank you for contacting us. We'll get back to you shortly.",
-  //   // });
-  //   form.reset();
-  // };
   const onSubmit = async (data: ContactFormData) => {
     setLoading(true);
     setSuccess(null);
     setError(null);
-    // const validated = contactSchema.safeParse(data);
-    // if (!validated.success) {
-    //   console.log(validated.error.flatten());
-    //   return;
-    // }
-    // await sendContactForm(validated.data);
+
     try {
       const validated = contactSchema.safeParse(data);
       if (!validated.success) {
@@ -88,21 +41,13 @@ const ContactFormSection = () => {
       }
       await sendContactForm(data);
       setSuccess("Message sent successfully!");
-      // toast({
-      //   // title: "Success",
-      //   description: "Your message has been sent successfully!",
-      //   variant: "success",
-      // });
+
       form.reset(); // clean form
       console.log(success);
     } catch (err) {
       console.error(err);
       setError("Failed to send message. Try again later.");
-      // toast({
-      //   // title: "Error",
-      //   description: "Failed to send message. Please try again.",
-      //   variant: "destructive",
-      // });
+
       console.log(error);
     } finally {
       setLoading(false);
