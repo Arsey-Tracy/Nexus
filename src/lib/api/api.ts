@@ -26,6 +26,22 @@ const DEFAULT_TIMEOUT = 30000; // ms
 
 let authToken: string | null = null;
 
+function readStoredToken(name: "access" | "refresh") {
+  try {
+    return localStorage.getItem(name);
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredAuth() {
+  try {
+    localStorage.removeItem("access");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh");
+  } catch {}
+}
+
 /**
  * Set auth token programmatically (optional).
  * Also stored in localStorage for persistence.
@@ -33,11 +49,10 @@ let authToken: string | null = null;
 export function setAuthToken(token: string | null) {
   authToken = token;
   try {
-    if (token) localStorage.setItem("access", token);
-    else {
-      localStorage.removeItem("access");
+    if (token) {
+      localStorage.setItem("access", token);
       localStorage.removeItem("token");
-    }
+    } else clearStoredAuth();
   } catch {}
 }
 
@@ -45,8 +60,11 @@ export function setAuthToken(token: string | null) {
  * Try to initialize token from localStorage on import.
  */
 try {
-  const t = localStorage.getItem("access") || localStorage.getItem("token");
-  if (t) authToken = t;
+  const accessToken = localStorage.getItem("access");
+  const legacyToken = localStorage.getItem("token");
+  authToken = accessToken || legacyToken;
+  if (!accessToken && legacyToken) localStorage.setItem("access", legacyToken);
+  if (legacyToken) localStorage.removeItem("token");
 } catch {}
 
 /**
@@ -84,6 +102,36 @@ async function parseResponse(res: Response) {
   }
 }
 
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken() {
+  const refreshToken = readStoredToken("refresh");
+  if (!refreshToken) return null;
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = fetch(`${API_BASE}/auth/token/refresh/`, {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh: refreshToken }),
+  })
+    .then(async (response) => {
+      if (!response.ok) return null;
+      const data = (await response.json()) as { access?: string; refresh?: string };
+      if (!data.access) return null;
+      setAuthToken(data.access);
+      if (data.refresh) localStorage.setItem("refresh", data.refresh);
+      return data.access;
+    })
+    .catch(() => null)
+    .finally(() => {
+      refreshPromise = null;
+    });
+
+  const nextToken = await refreshPromise;
+  if (!nextToken) clearStoredAuth();
+  return nextToken;
+}
+
 function timeoutPromise(ms: number, controller: AbortController) {
   return new Promise<never>((_resolve, reject) => {
     const id = setTimeout(() => {
@@ -105,6 +153,7 @@ async function request<T = any>(
     rawBody = false,
     skipAuth = false, // new: skip adding Authorization header
     includeCredentials = false, // new: only include credentials when explicitly requested
+    retryAfterRefresh = true,
   }: {
     body?: any;
     params?: Record<string, any>;
@@ -113,6 +162,7 @@ async function request<T = any>(
     rawBody?: boolean; // send body as-is (for FormData)
     skipAuth?: boolean;
     includeCredentials?: boolean;
+    retryAfterRefresh?: boolean;
   } = {}
 ): Promise<T> {
   const url = `${API_BASE}${path}${buildQuery(params)}`;
@@ -127,12 +177,7 @@ async function request<T = any>(
 
   // Add Authorization if available (authToken or localStorage) and not skipped
   if (!skipAuth) {
-    if (!authToken) {
-      try {
-        const t = localStorage.getItem("access") || localStorage.getItem("token");
-        if (t) authToken = t;
-      } catch {}
-    }
+    if (!authToken) authToken = readStoredToken("access");
     if (authToken) finalHeaders["Authorization"] = `Bearer ${authToken}`;
   }
 
@@ -171,6 +216,28 @@ async function request<T = any>(
   try {
     const res = await Promise.race([fetch(url, fetchOptions), timeoutPromise(timeout, controller)]) as Response;
     const parsed = await parseResponse(res);
+
+    if (
+      res.status === 401 &&
+      retryAfterRefresh &&
+      !skipAuth &&
+      !rawBody &&
+      path !== "/auth/token/refresh/"
+    ) {
+      const nextToken = await refreshAccessToken();
+      if (nextToken) {
+        return request<T>(method, path, {
+          body,
+          params,
+          headers,
+          timeout,
+          rawBody,
+          skipAuth,
+          includeCredentials,
+          retryAfterRefresh: false,
+        });
+      }
+    }
     
     // Log successful requests for debugging
     if (res.ok) {

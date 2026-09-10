@@ -7,11 +7,12 @@ import { usePathname } from "next/navigation";
 const NotFound = () => {
   const pathname = usePathname();
 
+  // Only log actual 404s in development, avoid logging during route transitions
   useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      pathname
-    );
+    // Skip logging for auth-related paths that might be transitioning
+    if (!pathname?.includes("/signin") && !pathname?.includes("/register")) {
+      console.warn("404 - Page not found:", pathname);
+    }
   }, [pathname]);
 
   return (

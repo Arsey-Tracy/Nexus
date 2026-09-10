@@ -68,13 +68,19 @@ export function SignInForm() {
     try {
       const data = await loginUser({ email, password });
       const access = data?.access ?? data?.token ?? null;
-      const user = data?.user ?? null;
+      const refresh = data?.refresh ?? null;
+      const user = data?.user ?? data?.profile?.user ?? null;
 
-      if (login && user && access) {
-        login(user, access);
-      } else if (access) {
-        localStorage.setItem("access", access);
-        if (data?.refresh) localStorage.setItem("refresh", data.refresh);
+      if (access) {
+        if (login && user) {
+          login(user, access, refresh ?? undefined);
+        } else {
+          try {
+            localStorage.setItem("access", access);
+            localStorage.removeItem("token");
+            if (refresh) localStorage.setItem("refresh", refresh);
+          } catch {}
+        }
       }
 
       const role = detectRoleFromResponse(data) ?? user?.user_type;

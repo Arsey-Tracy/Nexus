@@ -1,4 +1,4 @@
-import { BarChart3, Calendar, CreditCard, FileText, LayoutDashboard, MessageSquare, Settings, Shield, User, Users } from "lucide-react";
+import { BarChart3, Calendar, CreditCard, FileText, LayoutDashboard, MessageSquare, Settings, Shield, User, Users, CheckCircle, Link as LinkIcon } from "lucide-react";
 import React from "react";
 
 export type SidebarLink = {
@@ -8,10 +8,12 @@ export type SidebarLink = {
 };
 
 const adminLinks: SidebarLink[] = [
-  { href: "/dashboard/admin", label: "Overview", icon: LayoutDashboard }, // [cite: 21]
-  { href: "/dashboard/admin/users", label: "User Management", icon: Users }, // [cite: 21]
-  { href: "/dashboard/admin/appointments", label: "Appointments", icon: Calendar }, // [cite: 22]
-  { href: "/dashboard/admin/reports", label: "Reports", icon: BarChart3 }, // [cite: 22]
+  { href: "/dashboard/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/admin/users", label: "User Management", icon: Users },
+  { href: "/dashboard/admin/doctors/verify", label: "Verify Doctors", icon: CheckCircle },
+  { href: "/dashboard/admin/assignments", label: "Assign Doctors", icon: LinkIcon },
+  { href: "/dashboard/admin/appointments", label: "Appointments", icon: Calendar },
+  { href: "/dashboard/admin/reports", label: "Reports", icon: BarChart3 },
   { href: "/dashboard/admin/security", label: "System Health", icon: Shield },
   { href: "/dashboard/admin/settings", label: "Settings", icon: Settings },
 ];

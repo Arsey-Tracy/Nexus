@@ -20,7 +20,7 @@ type AuthContextType = {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (user: User, token: string) => void;
+  login: (user: User, token: string, refreshToken?: string) => void;
   logout: () => void;
   updateUser: (user: User) => void;
 };
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     (async () => {
       try {
         const storedToken =
-          localStorage.getItem("token") || localStorage.getItem("access");
+          localStorage.getItem("access") || localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
 
         if (storedToken) {
@@ -79,14 +79,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })();
   }, []);
 
-  const login = (userObj: User, tokenStr: string) => {
+  const login = (userObj: User, tokenStr: string, refreshToken?: string) => {
     setUser(userObj);
     setToken(tokenStr);
     setAuthToken(tokenStr);
     try {
       localStorage.setItem("user", JSON.stringify(userObj));
       localStorage.setItem("access", tokenStr);
-      localStorage.setItem("token", tokenStr);
+      localStorage.removeItem("token");
+      if (refreshToken) {
+        localStorage.setItem("refresh", refreshToken);
+      }
+      try {
+        // notify other client code (PWA setup) that user changed
+        window.dispatchEvent(new CustomEvent("nexus:user:updated", { detail: userObj }));
+      } catch (e) {}
     } catch {}
   };
 
@@ -94,6 +101,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(userObj);
     try {
       localStorage.setItem("user", JSON.stringify(userObj));
+      try {
+        window.dispatchEvent(new CustomEvent("nexus:user:updated", { detail: userObj }));
+      } catch (e) {}
     } catch {}
   };
 
@@ -106,6 +116,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.removeItem("access");
       localStorage.removeItem("token");
       localStorage.removeItem("refresh");
+      try {
+        window.dispatchEvent(new CustomEvent("nexus:user:updated", { detail: null }));
+      } catch (e) {}
     } catch {}
   };
 

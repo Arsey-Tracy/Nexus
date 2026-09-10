@@ -1,11 +1,12 @@
 /** @format */
 
 import { get, post, patch } from "./api"; // Assuming you have a base api utility
-
+import { Patient } from "./patient";
 // Type definitions based on your Django models
 export interface Consultation {
   id: number;
-  patient: { id: number; first_name: string; last_name: string; phone_number: string };
+  // patient: { id: number; first_name: string; last_name: string; phone_number: string };
+  patient: Patient
   doctor: { id: number; first_name: string; last_name: string } | null;
   consultation_type?: "virtual" | "bedside";
   symptoms: string;
@@ -27,6 +28,7 @@ export interface Doctor {
   };
   specialization: string;
   // Add other fields as needed
+
 }
 
 // This interface defines the response from requestConsultation
@@ -35,14 +37,11 @@ export interface ConsultationRequestResponse {
   consultation?: Consultation;
   payment_link?: string;
   id?: number;
-  // patient?: any;
-  // doctor?: any;
   patient?: Consultation['patient'];
   doctor?: Consultation['doctor'];
   symptoms?: string;
   notes?: string;
   status?: string;
-  // [key: string]: any;
   [key: string]: unknown;
 }
 

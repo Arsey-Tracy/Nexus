@@ -1,44 +1,88 @@
 /** @format */
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Sliders } from "lucide-react";
-// import { useAuth } from "@/lib/auth/AuthContext";
-// interface Patient {
-//   first_name: string;
-//   last_name: string;
-//   phone_number: string;
-// }
+import { getPatientProfile, updatePatientProfile, PatientProfile, Account } from "@/lib/api/profile";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// interface Profile {
-//   id: number;
-//   patient: Patient;
-// }
+type NotificationSettings = {
+  email: boolean;
+  sms: boolean;
+  appointments: boolean;
+  messages: boolean;
+};
+
 const SettingsPage = () => {
-  // const { user } = useAuth();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
 
-  type NotificationSettings = {
-    email: boolean;
-    sms: boolean;
-    appointments: boolean;
-    messages: boolean;
-  };
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const [notifications, setNotifications] = useState<NotificationSettings>({
+  const [notifications] = useState<NotificationSettings>({
     email: true,
-    sms: true,
+    sms: false,
     appointments: true,
     messages: true,
   });
 
-  const handleToggle = (key: keyof NotificationSettings) => {
-    setNotifications((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await getPatientProfile();
+        const profile = response as PatientProfile;
+        const user = profile.user as Account;
+
+        setFirstName(user.first_name || "");
+        setLastName(user.last_name || "");
+        setEmail(user.email || "");
+        setPhoneNumber(user.phone_number || "");
+        setDateOfBirth(user.date_of_birth || "");
+      } catch (err) {
+        console.error(err);
+        setError("Unable to load settings. Please refresh the page.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleSaveSettings = async () => {
+    try {
+      setSaving(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      const formData = new FormData();
+      formData.append("first_name", firstName);
+      formData.append("last_name", lastName);
+      formData.append("email", email);
+      formData.append("phone_number", phoneNumber);
+      formData.append("date_of_birth", dateOfBirth);
+
+      await updatePatientProfile(formData);
+      setSuccessMessage("Your patient settings have been saved.");
+      window.setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save settings. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -51,11 +95,95 @@ const SettingsPage = () => {
       <div className="flex items-center space-x-3 mb-6">
         <Sliders className="h-8 w-8 text-sky-600" />
         <div>
-          <h1 className="text-3xl font-bold">Settings &amp; Preferences</h1>
+          <h1 className="text-3xl font-bold">Patient Settings</h1>
           <p className="text-gray-600">
-            Customize your account and notification settings
+            Manage your account details and review notification preferences.
           </p>
         </div>
+      </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert>
+          <AlertDescription>{successMessage}</AlertDescription>
+        </Alert>
+      )}
+
+      <div className="app-card p-0">
+        <Card className="rounded-none">
+          <CardHeader>
+            <CardTitle>Personal Account Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  First Name
+                </label>
+                <Input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Last Name
+                </label>
+                <Input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Email Address
+                </label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Phone Number
+                </label>
+                <Input
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Date of Birth
+                </label>
+                <Input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="outline" disabled={saving || loading}>
+                Reset
+              </Button>
+              <Button onClick={handleSaveSettings} disabled={saving || loading}>
+                {saving ? "Saving..." : "Save Settings"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="app-card p-0">
@@ -65,64 +193,55 @@ const SettingsPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    Email Notifications
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Receive updates via email
-                  </p>
-                </div>
-                <Switch
-                  checked={notifications.email}
-                  onCheckedChange={() => handleToggle("email")}
-                />
+              <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4">
+                <p className="text-sm text-gray-700">
+                  Notification preference settings are currently under development.
+                  Changes will be persisted once this capability is available.
+                </p>
               </div>
-              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    SMS Notifications
-                  </p>
-                  <p className="text-sm text-gray-600">Receive text messages</p>
-                </div>
-                <Switch
-                  checked={notifications.sms}
-                  onCheckedChange={() => handleToggle("sms")}
-                />
-              </div>
-              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    Appointment Reminders
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Get reminded about upcoming appointments
-                  </p>
-                </div>
-                <Switch
-                  checked={notifications.appointments}
-                  onCheckedChange={() => handleToggle("appointments")}
-                />
-              </div>
-              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                <div>
-                  <p className="font-semibold text-gray-900">
-                    Message Notifications
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Get notified of new messages from doctors
-                  </p>
-                </div>
-                <Switch
-                  checked={notifications.messages}
-                  onCheckedChange={() => handleToggle("messages")}
-                />
+              <div className="grid gap-4">
+                {(
+                  [
+                    {
+                      title: "Email Notifications",
+                      description: "Receive updates via email",
+                      value: notifications.email,
+                    },
+                    {
+                      title: "SMS Notifications",
+                      description: "Receive text messages",
+                      value: notifications.sms,
+                    },
+                    {
+                      title: "Appointment Reminders",
+                      description: "Get reminded about upcoming appointments",
+                      value: notifications.appointments,
+                    },
+                    {
+                      title: "Message Notifications",
+                      description: "Get notified of new messages from doctors",
+                      value: notifications.messages,
+                    },
+                  ] as const
+                ).map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex items-center justify-between p-4 border rounded-lg bg-white"
+                  >
+                    <div>
+                      <p className="font-semibold text-gray-900">{item.title}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                    </div>
+                    <Switch checked={item.value} disabled />
+                  </div>
+                ))}
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-6">
-              <Button variant="outline">Reset</Button>
-              <Button>Save Preferences</Button>
+              <Button variant="outline" disabled>
+                Reset
+              </Button>
+              <Button disabled>Coming Soon</Button>
             </div>
           </CardContent>
         </Card>

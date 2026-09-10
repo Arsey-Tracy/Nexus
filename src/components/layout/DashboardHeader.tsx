@@ -1,7 +1,7 @@
 /** @format */
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { getMediaUrl } from "@/lib/utils";
@@ -23,7 +23,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Menu, X, Bell, Search, ChevronDown } from "lucide-react";
+import { Menu, X, Bell, Search, ChevronDown, DownloadCloud } from "lucide-react";
 import { ROLE_SIDEBAR_LINKS } from "@/lib/navLinks";
 
 const DashboardHeader = () => {
@@ -72,6 +72,54 @@ const DashboardHeader = () => {
   const displayName = user
     ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
     : "User";
+
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    // detect beforeinstallprompt at runtime
+    const handler = (e: Event) => {
+      try {
+        // @ts-ignore
+        e.preventDefault?.();
+        // @ts-expect-error store for manual use
+        window.__nexus_before_install_prompt = e;
+      } catch (err) {
+        console.error(err);
+      }
+      setCanInstall(true);
+    };
+
+    // if prompt already captured by PWASetup, reflect state
+    try {
+      // @ts-ignore
+      if (window.__nexus_before_install_prompt) setCanInstall(true);
+    } catch {}
+
+    window.addEventListener("beforeinstallprompt", handler as EventListener);
+    return () => window.removeEventListener("beforeinstallprompt", handler as EventListener);
+  }, []);
+
+  const handleInstallClick = async () => {
+    try {
+      // @ts-ignore
+      const promptEvent = window.__nexus_before_install_prompt;
+      if (!promptEvent) return setCanInstall(false);
+      // show browser install prompt
+      // @ts-ignore
+      promptEvent.prompt?.();
+      // @ts-ignore
+      const choice = await promptEvent.userChoice;
+      // clear stored prompt
+      try {
+        // @ts-ignore
+        delete window.__nexus_before_install_prompt;
+      } catch {}
+      setCanInstall(false);
+      // optional: you can react to choice.outcome
+    } catch (err) {
+      // ignore
+    }
+  };
 
   return (
     <>
@@ -226,6 +274,26 @@ const DashboardHeader = () => {
           height: 24px;
           background: #e2e8f0;
           margin: 0 4px;
+        }
+
+        /* Install button */
+        .install-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+          background: #f8fafc;
+          color: #64748b;
+          cursor: pointer;
+          transition: all 160ms ease;
+        }
+        .install-btn:hover {
+          background: #f0f9ff;
+          border-color: #bae6fd;
+          color: #0ea5e9;
         }
 
         /* Avatar trigger */
@@ -464,6 +532,13 @@ const DashboardHeader = () => {
             <Bell size={16} />
             <span className="notif-badge" />
           </Button>
+
+          {/* Install button (admin only) */}
+          {userRole === "admin" && canInstall && (
+            <Button onClick={handleInstallClick} className="install-btn" aria-label="Install app">
+              <DownloadCloud size={16} />
+            </Button>
+          )}
 
           <div className="header-divider" />
 

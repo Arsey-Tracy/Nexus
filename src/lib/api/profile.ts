@@ -45,7 +45,7 @@ export interface PracticingLicense{
   // id: number;
   doctor: DoctorProfile;
   umdpc_certificate: string;
-  foreign_medical_qualification: string;
+  foreign_medical_qualification?: string;
   license_number?: string;
   issuing_authority?: string;
   issue_date?: string;
@@ -79,9 +79,7 @@ export const getPatientProfile = () => {
 };
 
 export const createPracticingLicense = (formData: FormData) => {
-  return post<PracticingLicense>("/auth/licenses/", formData, {
-    headers: {"Content-Type": "multipart/form-data"}
-  })
+  return post<PracticingLicense>("/auth/licenses/", formData)
 }
 export const getMyPracticingLicense = (id: number) => {
   return get<PracticingLicense>(`/auth/licenses/${id}/`);

@@ -1,7 +1,7 @@
 /** @format */
 
-// Import the 'post' helper from your existing, robust API client
-import { post, get } from "./api";
+// Import the helpers and auth token manager from your existing API client
+import { post, get, setAuthToken } from "./api";
 
 // The API_URL is already handled by your api.ts file, so we don't need it here.
 
@@ -26,5 +26,10 @@ export const loginUser = (data: { email: string; password: string }) => {
 
 // Simplified getCurrentUser (protected) — keep auth
 export const getCurrentUser = () => {
-  return get("/me/");
+  return get("/auth/me/");
+};
+
+export const logout = () => {
+  setAuthToken(null);
+  return Promise.resolve();
 };

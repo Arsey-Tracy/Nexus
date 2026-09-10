@@ -6,13 +6,13 @@ import DashboardSidebar from "@/components/layout/DashboardSidebar";
 import { ReactNode } from "react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  // Roles copied from your original dashboard layout
-  const allDashboardRoles = ["doctor", "nurse", "patient", "admin"];
+  const dashboardRoles = ["doctor", "nurse", "patient", "admin"];
+
   return (
-    <ProtectedRoute allowedRoles={allDashboardRoles}>
+    <ProtectedRoute allowedRoles={dashboardRoles}>
       {/* Flex container for the entire screen */}
-      <div className="flex min-h-screen bg-gray-50">
-        {/* Sidebar fixed on desktop, hidden on mobile */}
+      <div className="flex min-h-screen bg-[#f8fafc]">
+        {/* Shared dashboard sidebar for all roles, including admin */}
         <DashboardSidebar />
 
         {/* Main content area: takes up remaining width and is a column */}

@@ -4,29 +4,32 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { getMyConsultations } from "@/lib/api/consultations";
+import { Consultation, getMyConsultations } from "@/lib/api/consultations";
 import { getDoctorProfileStatus } from "@/lib/api/profile";
+import {
+  getTodayAppointments,
+  completeAppointment,
+  Appointment,
+} from "@/lib/api/appointments";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Lock, CheckCircle2, Clock } from "lucide-react";
-
-// Define interfaces for type safety
-interface Patient {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-}
-
-interface Consultation {
-  id: number;
-  patient: Patient;
-  symptoms: string;
-  status: "pending" | "assigned" | "completed" | "approved" | "cancelled";
-  requested_at: string;
-  meeting_link?: string;
-}
+import {
+  AlertCircle,
+  Lock,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  User,
+} from "lucide-react";
+import {
+  DashboardPageShell,
+  DashboardHeaderSection,
+  StatCard,
+  AlertBanner,
+  EmptyState,
+} from "@/components/layout/DashboardShell";
 
 interface DoctorProfileStatus {
   is_complete: boolean;
@@ -41,10 +44,12 @@ export default function DoctorDashboard() {
   const { user } = useAuth();
   const router = useRouter();
   const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [profileStatus, setProfileStatus] =
     useState<DoctorProfileStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [completingId, setCompletingId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +64,15 @@ export default function DoctorDashboard() {
         if (statusData.can_receive_appointments) {
           const consultationsData = await getMyConsultations();
           setConsultations(consultationsData);
+
+          // Fetch today's appointments
+          try {
+            const appointmentsData = await getTodayAppointments();
+            setTodayAppointments(appointmentsData);
+          } catch (err) {
+            console.error("Failed to fetch today's appointments:", err);
+            setTodayAppointments([]);
+          }
         }
 
         setError(null);
@@ -73,9 +87,24 @@ export default function DoctorDashboard() {
     fetchData();
   }, []);
 
+  const handleMarkComplete = async (appointmentId: number) => {
+    try {
+      setCompletingId(appointmentId);
+      await completeAppointment(appointmentId);
+      // Refresh appointments
+      const appointmentsData = await getTodayAppointments();
+      setTodayAppointments(appointmentsData);
+    } catch (err) {
+      console.error("Failed to complete appointment:", err);
+      alert("Failed to mark appointment as complete. Please try again.");
+    } finally {
+      setCompletingId(null);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-8 space-y-6">
+      <DashboardPageShell>
         <div className="flex items-center justify-between">
           <Skeleton className="h-8 w-1/3" />
           <Skeleton className="h-8 w-20" />
@@ -86,148 +115,157 @@ export default function DoctorDashboard() {
           <Skeleton className="h-28 w-full" />
           <Skeleton className="h-28 w-full" />
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   // Show warning if profile is incomplete
   if (profileStatus && !profileStatus.is_complete) {
     return (
-      <div className="max-w-7xl mx-auto p-8 space-y-6">
-        <h1 className="text-3xl font-bold mb-6">
-          Welcome, Dr. {user?.first_name ?? ""}
-        </h1>
+      <DashboardPageShell>
+        <DashboardHeaderSection
+          title={`Welcome, Dr. ${user?.first_name ?? ""}`}
+          subtitle="Complete your profile to activate your dashboard and start receiving appointments."
+          badge={{ text: "Profile Incomplete", variant: "warning" }}
+        />
 
-        <Alert className="border-orange-500 bg-orange-50">
-          <AlertCircle className="h-5 w-5 text-orange-600" />
-          <AlertTitle className="text-orange-800 font-semibold">
-            Complete Your Profile
-          </AlertTitle>
-          <AlertDescription className="text-orange-700 mt-2">
-            Your profile is incomplete. Please complete all required fields to
-            activate your dashboard.
-            <br />
-            <br />
-            <strong>Missing fields:</strong>
-            <ul className="list-disc ml-5 mt-2">
-              {profileStatus.missing_fields.map((field) => (
-                <li key={field}>
-                  {field
-                    .replace(/_/g, " ")
-                    .replace(/^\w/, (c) => c.toUpperCase())}
-                </li>
-              ))}
-            </ul>
-            <br />
+        <AlertBanner
+          title="Complete Your Profile"
+          description={
+            <>
+              Your profile is incomplete. Please complete all required fields to activate your dashboard.
+              <br />
+              <br />
+              <strong>Missing fields:</strong>
+              <ul className="list-disc ml-5 mt-2 space-y-1">
+                {profileStatus.missing_fields.map((field) => (
+                  <li key={field}>
+                    {field
+                      .replace(/_/g, " ")
+                      .replace(/^\w/, (c) => c.toUpperCase())}
+                  </li>
+                ))}
+              </ul>
+            </>
+          }
+          variant="warning"
+          action={
             <Button
               onClick={() => router.push("/dashboard/doctor/profile")}
-              className="mt-4 bg-orange-600 hover:bg-orange-700"
+              className="bg-amber-600 hover:bg-amber-700"
             >
               Complete Profile
             </Button>
-          </AlertDescription>
-        </Alert>
+          }
+        />
 
-        <Card className="border-gray-200 opacity-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5" />
-              Dashboard Locked
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">
-              Please complete your profile to access the dashboard features.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6">
+          <div className="flex items-center gap-2 text-slate-500">
+            <Lock className="h-5 w-5" />
+            <span className="font-semibold text-slate-700">Dashboard Locked</span>
+          </div>
+          <p className="text-slate-500 mt-2">
+            Please complete your profile to access the dashboard features.
+          </p>
+        </div>
+      </DashboardPageShell>
     );
   }
 
   // Show warning if profile is not verified by admin
   if (profileStatus && !profileStatus.is_verified) {
     return (
-      <div className="max-w-7xl mx-auto p-8 space-y-6">
-        <h1 className="text-3xl font-bold mb-6">
-          Welcome, Dr. {user?.first_name ?? ""}
-        </h1>
+      <DashboardPageShell>
+        <DashboardHeaderSection
+          title={`Welcome, Dr. ${user?.first_name ?? ""}`}
+          subtitle="Your dashboard will be unlocked once your profile is verified by our admin team."
+          badge={{
+            text:
+              profileStatus.admin_verification_status === "pending"
+                ? "Verification Pending"
+                : "Verification Rejected",
+            variant:
+              profileStatus.admin_verification_status === "pending"
+                ? "info"
+                : "warning",
+          }}
+        />
 
         {profileStatus.admin_verification_status === "pending" && (
-          <Alert className="border-blue-500 bg-blue-50">
-            <Clock className="h-5 w-5 text-blue-600" />
-            <AlertTitle className="text-blue-800 font-semibold">
-              Admin Verification Pending
-            </AlertTitle>
-            <AlertDescription className="text-blue-700 mt-2">
-              Your profile has been submitted for verification. Our admin team
-              will review your credentials and contact you soon. This usually
-              takes 24-48 hours.
-              <br />
-              <br />
-              In the meantime, you can continue to update your profile
-              information.
-              <div className="mt-4">
-                <Button
-                  onClick={() => router.push("/dashboard/doctor/profile")}
-                  variant="outline"
-                >
-                  Update Profile
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
+          <AlertBanner
+            title="Admin Verification Pending"
+            description={
+              <>
+                Your profile has been submitted for verification. Our admin team
+                will review your credentials and contact you soon. This usually
+                takes 24-48 hours.
+                <br />
+                <br />
+                In the meantime, you can continue to update your profile
+                information.
+              </>
+            }
+            variant="info"
+            action={
+              <Button
+                onClick={() => router.push("/dashboard/doctor/profile")}
+                variant="outline"
+              >
+                Update Profile
+              </Button>
+            }
+          />
         )}
 
         {profileStatus.admin_verification_status === "rejected" && (
-          <Alert className="border-red-500 bg-red-50">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <AlertTitle className="text-red-800 font-semibold">
-              Profile Verification Rejected
-            </AlertTitle>
-            <AlertDescription className="text-red-700 mt-2">
-              Your profile was not approved for the following reason:
-              <br />
-              <strong>{profileStatus.rejection_reason}</strong>
-              <br />
-              <br />
-              Please update your profile and resubmit for verification.
-              <div className="mt-4">
-                <Button
-                  onClick={() => router.push("/dashboard/doctor/profile")}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Update Profile
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
+          <AlertBanner
+            title="Profile Verification Rejected"
+            description={
+              <>
+                Your profile was not approved for the following reason:
+                <br />
+                <strong>{profileStatus.rejection_reason}</strong>
+                <br />
+                <br />
+                Please update your profile and resubmit for verification.
+              </>
+            }
+            variant="error"
+            action={
+              <Button
+                onClick={() => router.push("/dashboard/doctor/profile")}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Update Profile
+              </Button>
+            }
+          />
         )}
 
-        <Card className="border-gray-200 opacity-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5" />
-              Dashboard Locked
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-500">
-              Your dashboard will be unlocked once your profile is verified by
-              our admin team.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        <div className="rounded-2xl border border-slate-100 bg-slate-50/50 p-6">
+          <div className="flex items-center gap-2 text-slate-500">
+            <Lock className="h-5 w-5" />
+            <span className="font-semibold text-slate-700">Dashboard Locked</span>
+          </div>
+          <p className="text-slate-500 mt-2">
+            Your dashboard will be unlocked once your profile is verified by our
+            admin team.
+          </p>
+        </div>
+      </DashboardPageShell>
     );
   }
 
   // Profile is verified - show main dashboard
   if (error) {
     return (
-      <div className="p-8">
-        <div className="text-red-500 bg-red-50 p-4 rounded-lg">{error}</div>
-      </div>
+      <DashboardPageShell>
+        <AlertBanner
+          title="Error"
+          description={error}
+          variant="error"
+        />
+      </DashboardPageShell>
     );
   }
 
@@ -236,137 +274,219 @@ export default function DoctorDashboard() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto p-8 space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">
-          Welcome, Dr. {user?.first_name ?? ""}
-        </h1>
-        <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
-          <CheckCircle2 className="h-5 w-5 text-green-600" />
-          <span className="text-green-700 font-medium">Verified</span>
-        </div>
+    <DashboardPageShell>
+      <DashboardHeaderSection
+        title={`Welcome, Dr. ${user?.first_name ?? ""}`}
+        subtitle="Manage your consultations, appointments, and patient interactions."
+        actions={
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            <span className="text-emerald-700 font-medium">Verified</span>
+          </div>
+        }
+      />
+
+      {/* Stats Overview */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+        <StatCard
+          title="Upcoming Consultations"
+          value={upcomingConsultations.length}
+          icon={Clock}
+          iconColorClassName="text-sky-600 bg-sky-50 border-sky-100"
+          description="Assigned consultations awaiting action"
+        />
+        <StatCard
+          title="Today's Appointments"
+          value={todayAppointments?.length || 0}
+          icon={CheckCircle2}
+          iconColorClassName="text-emerald-600 bg-emerald-50 border-emerald-100"
+          description="Scheduled appointments for today"
+        />
+        <StatCard
+          title="Total Consultations"
+          value={consultations.length}
+          icon={AlertTriangle}
+          iconColorClassName="text-amber-600 bg-amber-50 border-amber-100"
+          description="All time consultation requests"
+        />
       </div>
 
       {/* Upcoming Consultations */}
-      <div className="app-card p-0">
-        <Card className="rounded-none">
-          <CardHeader>
-            <CardTitle>Upcoming Consultations</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {upcomingConsultations.length > 0 ? (
-              <div className="space-y-4">
-                {upcomingConsultations.map((c) => (
-                  <div
-                    key={c.id}
-                    className="p-4 border rounded-lg flex justify-between items-center hover:bg-gray-50"
-                  >
-                    <div>
-                      <p className="font-semibold">
-                        Patient: {c.patient.first_name} {c.patient.last_name}
+      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50/80">
+          <h3 className="flex items-center gap-2.5 text-base font-semibold text-slate-800">
+            <span className="h-7 w-7 rounded-lg bg-sky-100 flex items-center justify-center">
+              <Clock className="h-3.5 w-3.5 text-sky-600" />
+            </span>
+            Upcoming Consultations
+          </h3>
+        </div>
+        <div className="p-6 space-y-4">
+          {upcomingConsultations.length > 0 ? (
+            <div className="space-y-3">
+              {upcomingConsultations.map((c) => (
+                <div
+                  key={c.id}
+                  className="group rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-white hover:border-sky-200 hover:shadow-sm px-4 py-4 flex items-start justify-between gap-4 transition-all duration-150"
+                >
+                  <div className="flex items-start gap-3 min-w-0">
+                    <div className="h-9 w-9 rounded-lg bg-sky-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <User className="h-4 w-4 text-sky-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {c.patient.first_name} {c.patient.last_name}
                       </p>
-                      <p className="text-sm text-gray-600">
-                        Symptoms: {c.symptoms}
+                      <p className="text-xs text-slate-600 mt-0.5 line-clamp-1">
+                        {c.symptoms}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        Requested on:{" "}
+                      <p className="text-xs text-slate-400 mt-0.5">
                         {new Date(c.requested_at).toLocaleString()}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        asChild
-                        disabled={!c.patient.phone_number}
-                        variant="default"
+                  </div>
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <Button
+                      asChild
+                      disabled={!c.patient.phone_number}
+                      variant="default"
+                    >
+                      <a
+                        href={`tel:${c.patient.phone_number}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <a
-                          href={`tel:${c.patient.phone_number}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Call Patient
-                        </a>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          // TODO: Implement mark as complete
-                          console.log("Mark as complete:", c.id);
-                        }}
-                      >
-                        Mark Complete
-                      </Button>
+                        Call Patient
+                      </a>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        handleMarkComplete(c.id as unknown as number)
+                      }
+                      disabled={completingId === c.id}
+                    >
+                      {completingId === c.id ? "Marking..." : "Mark Complete"}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="No upcoming consultations"
+              description="You have no assigned consultations at the moment."
+              icon={CheckCircle2}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Today's Appointments */}
+      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-white to-slate-50/80">
+          <h3 className="flex items-center gap-2.5 text-base font-semibold text-slate-800">
+            <span className="h-7 w-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+            </span>
+            Today's Appointments
+          </h3>
+        </div>
+        <div className="p-6 space-y-4">
+          {todayAppointments && todayAppointments.length > 0 ? (
+            <div className="space-y-3">
+              {todayAppointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="group rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-white hover:border-emerald-200 hover:shadow-sm px-4 py-4 flex items-center justify-between gap-4 transition-all duration-150"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-9 w-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                      <User className="h-4 w-4 text-emerald-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {appointment.patient_name}
+                      </p>
+                      <p className="text-xs text-slate-600">
+                        {appointment.appointment_type}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {new Date(appointment.schedule_time).toLocaleTimeString()}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500">
-                You have no upcoming consultations.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleMarkComplete(appointment.id)}
+                    disabled={completingId === appointment.id}
+                  >
+                    {completingId === appointment.id ? "..." : "Complete"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title="No appointments today"
+              description="You have no appointments scheduled for today."
+              icon={Clock}
+            />
+          )}
+        </div>
       </div>
 
-      {/* Today's Appointments Section */}
-      <div className="app-card p-0">
-        <Card className="rounded-none">
-          <CardHeader>
-            <CardTitle>Today&apos;s Appointments</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              No appointments scheduled for today.
+      {/* Patient Queue Section - Under Development */}
+      <div className="rounded-2xl border border-amber-200 bg-amber-50/40 overflow-hidden">
+        <div className="px-6 py-4 border-b border-amber-200 bg-gradient-to-r from-amber-50 to-amber-100/50">
+          <h3 className="flex items-center gap-2.5 text-base font-semibold text-amber-800">
+            <span className="h-7 w-7 rounded-lg bg-amber-100 flex items-center justify-center">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+            </span>
+            Patient Queue
+          </h3>
+        </div>
+        <div className="p-6">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm text-amber-800">
+              <strong>Coming Soon:</strong> Patient queue functionality is
+              currently under development. This feature will be available soon.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
-      {/* Patient Queue Section */}
-      <div className="app-card p-0">
-        <Card className="rounded-none">
-          <CardHeader>
-            <CardTitle>Patient Queue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              No patients currently in queue.
+      {/* Quick Actions Section - Under Development */}
+      <div className="rounded-2xl border border-amber-200 bg-amber-50/40 overflow-hidden">
+        <div className="px-6 py-4 border-b border-amber-200 bg-gradient-to-r from-amber-50 to-amber-100/50">
+          <h3 className="flex items-center gap-2.5 text-base font-semibold text-amber-800">
+            <span className="h-7 w-7 rounded-lg bg-amber-100 flex items-center justify-center">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+            </span>
+            Quick Actions
+          </h3>
+        </div>
+        <div className="p-6">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm text-amber-800 mb-3">
+              <strong>Coming Soon:</strong> Additional quick actions are
+              currently under development.
             </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions Section */}
-      <div className="app-card p-0">
-        <Card className="rounded-none">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button
-                variant="outline"
-                onClick={() => console.log("Start consultation")}
-              >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 opacity-50">
+              <Button variant="outline" disabled>
                 Start Consultation
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => console.log("Write prescription")}
-              >
+              <Button variant="outline" disabled>
                 Write Prescription
               </Button>
-              <Button
-                variant="outline"
-                onClick={() => console.log("Update availability")}
-              >
+              <Button variant="outline" disabled>
                 Update Availability
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

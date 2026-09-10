@@ -1,6 +1,6 @@
 /** @format */
 
-import { get, put } from "./api";
+import { get, put, del } from "./api";
 
 // Doctor verification interfaces
 export interface DoctorForVerification {
@@ -56,4 +56,85 @@ export const verifyDoctor = (
     `/auth/admin/verify-doctor/${doctorId}/`,
     decision
   );
+};
+
+// Admin dashboard statistics interface
+export interface AdminStats {
+  total_users: number;
+  total_patients: number;
+  total_doctors: number;
+  total_nurses: number;
+  pending_doctor_verifications: number;
+  verified_doctors: number;
+}
+
+// Admin user management interfaces
+export interface AdminUser {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_type: "patient" | "doctor" | "nurse" | "admin";
+  phone_number: string;
+  profile_pic: string | null;
+  is_verified: boolean;
+  created_at: string;
+  profile?: any;
+}
+
+// Get admin dashboard statistics
+export const getAdminStats = () => {
+  return get<AdminStats>(`/auth/admin/stats/`);
+};
+
+// Get list of all users with filters
+export const getAdminUsers = (userType?: string, search?: string) => {
+  let url = `/auth/admin/users/`;
+  const params = new URLSearchParams();
+  
+  if (userType) params.append("type", userType);
+  if (search) params.append("search", search);
+  
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+  
+  return get<AdminUser[]>(url);
+};
+
+// Get detailed information about a specific user
+export const getAdminUserDetail = (userId: number) => {
+  return get<AdminUser>(`/auth/admin/users/${userId}/`);
+};
+
+export interface AdminContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  newsletter_subscription: boolean;
+  ip_address: string | null;
+  created_at: string;
+  is_read: boolean;
+}
+
+export const getAdminContactMessages = (
+  status?: "read" | "unread",
+  search?: string
+) => {
+  const params = new URLSearchParams();
+  if (status) params.append("status", status);
+  if (search) params.append("search", search);
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  return get<AdminContactMessage[]>(`/contact/admin/messages/${suffix}`);
+};
+
+export const getAdminContactMessage = (messageId: number) => {
+  return get<AdminContactMessage>(`/contact/admin/messages/${messageId}/`);
+};
+
+export const deleteAdminContactMessage = (messageId: number) => {
+  return del(`/contact/admin/messages/${messageId}/`);
 };

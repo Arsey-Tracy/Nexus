@@ -2,46 +2,7 @@
 "use client";
 
 import React from "react";
-import ProjectCard from "@/components/ProjectCard";
-// Button import can be removed if not used for "View All Projects"
-// import { Button } from '@/components/ui/button';
-
-const mockProjects = [
-  {
-    id: "1",
-    title: "Nexus AI Health Assistant (NAHA)",
-    description: "An AI-powered tool to support healthcare needs.",
-    imageUrl: "/placeholder.svg", // Ensure this path is correct or use an uploaded image
-    goal: 10000,
-    raised: 4500,
-  },
-  {
-    id: "2",
-    title: "Breast Cancer Prevention Innovation",
-    description:
-      "Solutions for early detection and prevention of breast cancer",
-    imageUrl: "/placeholder.svg",
-    goal: 25000,
-    raised: 12000,
-  },
-  {
-    id: "3",
-    title: "Sign Language Translator",
-    description:
-      "Building an innovative sign language translator into text and speech using AI.",
-    imageUrl: "/placeholder.svg",
-    goal: 50000,
-    raised: 15000,
-  },
-  {
-    id: "4",
-    title: "AMR Digital Tracker(planned)",
-    description: "A tool to monitor and track antimicrobial resistance",
-    imageUrl: "/placeholder.svg",
-    goal: 150000,
-    raised: 34000,
-  },
-];
+import { AlertCircle } from "lucide-react";
 
 const ProjectsSection = () => {
   return (
@@ -56,28 +17,23 @@ const ProjectsSection = () => {
             accessibility. Join us in making a difference.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              id={project.id} // Pass the id to ProjectCard
-              title={project.title}
-              description={project.description}
-              imageUrl={project.imageUrl}
-            />
-          ))}
-        </div>
-        {/* Optional: A button to see all projects if this section is a teaser on the homepage
-            And if the current page is not already /projects
-        */}
 
-        {/* {window.location.pathname !== "/projects" && (
-          <div className="text-center mt-12 md:mt-16">
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/projects">View All Projects</Link>
-            </Button>
+        {/* Under Development Message */}
+        <div className="max-w-2xl mx-auto rounded-2xl border border-amber-200 bg-amber-50 px-8 py-12 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="rounded-full bg-amber-100 p-3">
+              <AlertCircle className="h-6 w-6 text-amber-600" />
+            </div>
           </div>
-        )} */}
+          <h3 className="text-2xl font-bold text-amber-900 mb-2">
+            Coming Soon
+          </h3>
+          <p className="text-amber-800">
+            The projects feature is currently under development. We're working
+            hard to bring you innovative healthcare projects soon. Check back
+            later!
+          </p>
+        </div>
       </div>
     </section>
   );
