@@ -105,6 +105,7 @@ async function parseResponse(res: Response) {
 let refreshPromise: Promise<string | null> | null = null;
 
 async function refreshAccessToken() {
+  // refreshtoken
   const refreshToken = readStoredToken("refresh");
   if (!refreshToken) return null;
   if (refreshPromise) return refreshPromise;
